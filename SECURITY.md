@@ -1,6 +1,6 @@
 # Security Policy
 
-Crash Detector reads local Windows Event Viewer data and selected executable paths. It should not upload crash logs, hardware data, usernames, file paths, or reports anywhere.
+Crash Detector reads local Windows Event Viewer data and selected executable paths. It does not upload crash logs, hardware data, usernames, file paths, or reports anywhere.
 
 ## Reporting Issues
 

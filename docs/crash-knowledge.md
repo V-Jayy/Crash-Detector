@@ -1,6 +1,6 @@
 # Crash Knowledge Base
 
-Crash Detector uses JSON knowledge packs instead of hard-coded C# classes. This file explains the current shape and the research standard for adding more.
+Crash Detector uses JSON knowledge packs instead of hard coded app logic. This file explains the current shape and the research standard for adding more.
 
 ## Windows Events
 
@@ -56,7 +56,7 @@ Good additions include:
 - A source link from Microsoft Learn, official support docs, a game store page, or vendor documentation.
 - The exact process name or module name.
 - A clear explanation of what the signature means.
-- Follow-up checks that gather evidence before asking the user to reinstall everything.
+- Follow up checks that gather evidence before asking the user to reinstall everything.
 
 Avoid:
 

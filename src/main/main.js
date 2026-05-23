@@ -18,6 +18,7 @@ function readJson(name) {
 }
 
 function createWindow() {
+  const iconPath = path.join(__dirname, "..", "renderer", "icon.png");
   const win = new BrowserWindow({
     width: 1180,
     height: 780,
@@ -25,6 +26,7 @@ function createWindow() {
     minHeight: 720,
     backgroundColor: "#101317",
     title: "Crash Detector",
+    icon: iconPath,
     frame: false,
     autoHideMenuBar: true,
     webPreferences: {

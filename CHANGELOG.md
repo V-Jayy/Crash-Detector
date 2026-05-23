@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.1.0 - 2026-05-23
+
+### Added
+
+- App icon in the title bar and Windows portable build.
+- Direct download link for the portable `.exe` in the README.
+
+### Changed
+
+- README, contributing guide, and crash knowledge docs rewritten in Lumin voice.
+- Sidebar branding now uses text only. The icon appears in the top bar.
+
 ## v2.0.0 - 2026-05-23
 
 Initial public Electron release of Crash Detector.

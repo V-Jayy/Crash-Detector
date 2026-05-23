@@ -57,10 +57,24 @@ body {
 }
 
 .window-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding-left: 14px;
   color: var(--text);
   font-size: 12px;
   font-weight: 800;
+}
+
+.app-icon {
+  display: block;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.window-app-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .window-controls {

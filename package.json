@@ -1,6 +1,6 @@
 {
   "name": "crash-detector",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Lightweight Electron crash log analyzer for Windows games and apps.",
   "main": "src/main/main.js",
   "type": "commonjs",
@@ -20,6 +20,7 @@
   "build": {
     "appId": "com.lumin.crash-detector",
     "productName": "Crash Detector",
+    "icon": "build/icon.png",
     "directories": {
       "output": "dist"
     },

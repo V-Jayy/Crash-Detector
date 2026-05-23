@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve Crash Detector. The most useful contributions are well-sourced data additions, clearer crash explanations, and fixes that make Windows Event Viewer parsing more reliable.
+Thanks for helping improve Crash Detector. The most useful contributions are well sourced data additions, clearer crash explanations, and fixes that make Windows Event Viewer parsing more reliable.
 
 ## Local Setup
 
@@ -14,7 +14,7 @@ Live scans require Windows because the app reads Windows Event Viewer through Po
 
 ## Adding Game Data
 
-Add games to `data/games.json`. Keep entries data-only so the analyzer can learn new games without code changes.
+Add games to `data/games.json`. Keep entries data only so the analyzer can learn new games without code changes.
 
 Each game should include:
 
@@ -27,7 +27,7 @@ Each game should include:
 - `knownCrashes`: only when there is a specific, explainable signature.
 - `sources`: official support, store, launcher, or vendor links.
 
-Prefer official sources. If a rule is based on observed behavior, make that clear in the explanation and keep the claim narrow.
+Prefer official sources. If a rule is based on observed behavior, say that in the explanation and keep the claim narrow.
 
 ## Adding Crash Signatures
 
@@ -38,7 +38,7 @@ Good crash knowledge includes:
 - A specific event provider, Event ID, exception code, bug check, or module fragment.
 - A practical explanation written for a Windows gaming user.
 - Evidence bullets that explain why the rule matched.
-- Follow-up checks that gather more evidence before asking users to reinstall everything.
+- Follow up checks that gather more evidence before asking users to reinstall everything.
 - Source links, especially Microsoft Learn for Windows events and NTSTATUS or bug check values.
 
 Avoid broad, unsourced advice. `KERNELBASE.dll` and `ntdll.dll` are common final reporting modules and should not be treated as root causes by themselves.
