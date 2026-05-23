@@ -9,8 +9,9 @@ const { groupCrashes } = require("../shared/grouper");
 const { detectInstalledGames } = require("../shared/game-detector");
 const { crashToPlainText, exportPayload } = require("../shared/formatters");
 
-const rootDir = path.join(__dirname, "..", "..");
-const dataDir = path.join(rootDir, "data");
+const dataDir = app.isPackaged
+  ? path.join(process.resourcesPath, "data")
+  : path.join(__dirname, "..", "..", "data");
 
 function readJson(name) {
   return JSON.parse(fs.readFileSync(path.join(dataDir, name), "utf8"));

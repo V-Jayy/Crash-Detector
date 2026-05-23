@@ -14,7 +14,31 @@
   },
   "scripts": {
     "start": "electron .",
-    "check": "node --check src/main/main.js && node --check src/main/preload.js && node --check src/shared/analyzer.js && node --check src/shared/event-parser.js && node --check src/shared/formatters.js && node --check src/shared/game-detector.js && node --check src/shared/grouper.js && node --check src/renderer/app.js"
+    "check": "node --check src/main/main.js && node --check src/main/preload.js && node --check src/shared/analyzer.js && node --check src/shared/event-parser.js && node --check src/shared/formatters.js && node --check src/shared/game-detector.js && node --check src/shared/grouper.js && node --check src/renderer/app.js",
+    "build": "electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.lumin.crash-detector",
+    "productName": "Crash Detector",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "data",
+        "to": "data"
+      }
+    ],
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "artifactName": "Crash-Detector-${version}-portable.${ext}"
+    }
   },
   "keywords": [
     "electron",
@@ -29,6 +53,7 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "electron": "^42.2.0"
+    "electron": "^42.2.0",
+    "electron-builder": "^26.0.12"
   }
 }
