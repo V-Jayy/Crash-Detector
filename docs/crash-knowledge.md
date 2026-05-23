@@ -23,7 +23,7 @@ The app scans these by default:
 
 ## Exception Codes
 
-Current documented NTSTATUS-style codes:
+Current documented NTSTATUS-style codes. These should explain what Windows caught, not pretend the code alone identifies the root cause.
 
 | Code | Meaning | Analyzer category |
 | --- | --- | --- |
@@ -34,6 +34,9 @@ Current documented NTSTATUS-style codes:
 | `0xe0434352` | .NET CLR exception marker | .NET runtime |
 | `0xc00000fd` | Stack overflow | Application bug |
 | `0x80000003` | Breakpoint | Application bug / anti-tamper context |
+| `0xc0000135` | DLL not found | Windows runtime |
+| `0xc0000142` | DLL initialization failed | Windows runtime |
+| `0xc000007b` | Invalid image format | Windows runtime |
 
 ## Bug Checks
 
@@ -46,6 +49,27 @@ Current blue screen codes:
 | `0x0000007e` | SYSTEM_THREAD_EXCEPTION_NOT_HANDLED | System driver |
 | `0x0000001a` | MEMORY_MANAGEMENT | Memory |
 | `0x000000ef` | CRITICAL_PROCESS_DIED | System driver |
+| `0x00000124` | WHEA_UNCORRECTABLE_ERROR | Hardware |
+| `0x00000133` | DPC_WATCHDOG_VIOLATION | System driver |
+| `0x00000119` | VIDEO_SCHEDULER_INTERNAL_ERROR | GPU driver |
+| `0x0000009f` | DRIVER_POWER_STATE_FAILURE | System driver |
+| `0x0000003b` | SYSTEM_SERVICE_EXCEPTION | System driver |
+
+## Game Research Coverage
+
+The current game pack covers 19 games and every game now has at least one narrow `knownCrashes` entry. These entries are intentionally evidence-based: they match a process plus a module or message fragment, then explain what that specific signature means.
+
+High-value patterns covered now include:
+
+- Riot Vanguard for VALORANT and League of Legends.
+- Easy Anti-Cheat for Fortnite, Apex Legends, and THE FINALS.
+- BattlEye context for Destiny 2, PUBG, and Rainbow Six Siege.
+- GameGuard context for HELLDIVERS 2.
+- Source 2 module crashes for Counter-Strike 2 and Dota 2.
+- Epic Online Services / Rockstar Social Club launcher paths.
+- Minecraft Java LWJGL/OpenGL and Minecraft for Windows Store/Xbox package paths.
+- Roblox graphics, blocked-image, and client-integrity paths.
+- Graphics-driver paths for high-load DirectX titles such as Call of Duty, Overwatch 2, and HELLDIVERS 2.
 
 ## Adding Knowledge
 
@@ -81,5 +105,20 @@ The old C# app had these concepts:
 - Microsoft Kernel-Power Event ID 41: https://learn.microsoft.com/en-us/troubleshoot/windows-client/performance/event-id-41-restart
 - Microsoft unexpected reboot event log guidance: https://learn.microsoft.com/en-us/troubleshoot/windows-server/performance/troubleshoot-unexpected-reboots-system-event-logs
 - Microsoft Bug Check 0x116 VIDEO_TDR_FAILURE: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x116---video-tdr-failure
+- Microsoft Bug Check 0x119 VIDEO_SCHEDULER_INTERNAL_ERROR: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x119---video-scheduler-internal-error
+- Microsoft Bug Check 0x124 WHEA_UNCORRECTABLE_ERROR: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x124---whea-uncorrectable-error
+- Microsoft Bug Check 0x133 DPC_WATCHDOG_VIOLATION: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x133-dpc-watchdog-violation
+- Microsoft Bug Check 0x9F DRIVER_POWER_STATE_FAILURE: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x9f--driver-power-state-failure
+- Microsoft Bug Check 0x3B SYSTEM_SERVICE_EXCEPTION: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x3b--system-service-exception
 - Microsoft Bug Check reference: https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-checks--blue-screens-
 - Microsoft MS-ERREF NTSTATUS reference: https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55
+- Riot Vanguard for League of Legends: https://support-leagueoflegends.riotgames.com/hc/en-us/articles/24169857932435-Riot-Vanguard-League-of-Legends
+- VALORANT Vanguard Windows 11 requirements: https://support-valorant.riotgames.com/hc/en-us/articles/10088435639571-Troubleshooting-the-VAN9001-or-VAN-9003-Error-on-Windows-11-VALORANT
+- BattlEye FAQ: https://www.battleye.org/support/faq/
+- Bungie BattlEye guide: https://help.bungie.net/hc/en-us/articles/4404072197140-BattlEye-Anti-Cheat-Support-Guide
+- Roblox graphics troubleshooting: https://en.help.roblox.com/hc/en-us/articles/203312790-Graphics-Problems-on-Computers
+- Roblox anti-cheat messages: https://en.help.roblox.com/hc/en-us/articles/24275616578708-Anti-cheat-Messages
+- Minecraft Java mods: https://help.minecraft.net/hc/en-us/articles/4409139065613-Mods-for-Minecraft-Java-Edition
+- Minecraft Java memory allocation: https://help.minecraft.net/hc/en-us/articles/39083573916941
+- Minecraft Java graphics troubleshooting: https://help.minecraft.net/hc/en-us/articles/4409137348877-Minecraft-Java-Edition-Game-Crashes-and-Performance-Issues-FAQ
+- Rockstar GTA V ERR_GFX_STATE support: https://support.rockstargames.com/articles/2vEOZW3tzshakakcwRvakg/grand-theft-auto-v-on-pc-crashing-with-err_gfx_state-error

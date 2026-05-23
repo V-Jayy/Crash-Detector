@@ -5,255 +5,889 @@
       "id": "fortnite",
       "displayName": "Fortnite",
       "launcher": "Epic Games Launcher",
-      "processNames": ["FortniteClient-Win64-Shipping.exe", "FortniteClient-Win64-Shipping_EAC_EOS.exe", "FortniteLauncher.exe"],
-      "installMarkers": ["FortniteGame\\Binaries\\Win64\\FortniteClient-Win64-Shipping.exe"],
-      "publishers": ["Epic Games"],
-      "knownModules": ["EasyAntiCheat", "EOSSDK-Win64-Shipping.dll", "UnrealEngine"],
+      "processNames": [
+        "FortniteClient-Win64-Shipping.exe",
+        "FortniteClient-Win64-Shipping_EAC_EOS.exe",
+        "FortniteLauncher.exe"
+      ],
+      "installMarkers": [
+        "FortniteGame\\Binaries\\Win64\\FortniteClient-Win64-Shipping.exe"
+      ],
+      "publishers": [
+        "Epic Games"
+      ],
+      "knownModules": [
+        "EasyAntiCheat",
+        "EOSSDK-Win64-Shipping.dll",
+        "UnrealEngine"
+      ],
       "knownCrashes": [
         {
           "id": "fortnite-eac-module",
           "title": "Fortnite crash with Easy Anti-Cheat in the signature",
           "faultingModuleContains": "EasyAntiCheat",
           "category": "anticheat",
-          "explanation": "Fortnite uses Easy Anti-Cheat, and a signature containing EasyAntiCheat points to the launch protection path rather than only the game renderer. Repairing EAC and rebooting is more useful than generic reinstall advice.",
-          "evidence": ["Faulting module contains EasyAntiCheat.", "Process name matches Fortnite."],
-          "checks": ["Use Epic Games Launcher Verify.", "Repair Easy Anti-Cheat from the Fortnite install folder if present.", "Disable overlays and kernel-level tools for one launch test."]
+          "explanation": "Fortnite crashed while Easy Anti-Cheat code was active. The failure happened in the anti-cheat layer, not ordinary rendering.",
+          "evidence": [
+            "Faulting module contains EasyAntiCheat.",
+            "Process name matches Fortnite."
+          ]
         }
       ],
-      "commonCauses": ["Easy Anti-Cheat or Epic overlay conflicts", "Outdated GPU drivers or DirectX issues", "Corrupted Fortnite or Epic launcher cache"],
-      "sources": ["https://www.epicgames.com/help/en-US/c-5719341627163/a000086158"]
+      "commonCauses": [
+        "Easy Anti-Cheat or Epic overlay conflicts",
+        "Outdated GPU drivers or DirectX issues",
+        "Corrupted Fortnite or Epic launcher cache"
+      ],
+      "sources": [
+        "https://www.epicgames.com/help/en-US/c-5719341627163/a000086158"
+      ]
     },
     {
       "id": "valorant",
       "displayName": "VALORANT",
       "launcher": "Riot Client",
-      "processNames": ["VALORANT-Win64-Shipping.exe", "VALORANT.exe", "RiotClientServices.exe"],
-      "installMarkers": ["ShooterGame\\Binaries\\Win64\\VALORANT-Win64-Shipping.exe"],
-      "publishers": ["Riot Games"],
-      "knownModules": ["vgk.sys", "vgc.exe", "Riot Vanguard"],
+      "processNames": [
+        "VALORANT-Win64-Shipping.exe",
+        "VALORANT.exe",
+        "RiotClientServices.exe"
+      ],
+      "installMarkers": [
+        "ShooterGame\\Binaries\\Win64\\VALORANT-Win64-Shipping.exe"
+      ],
+      "publishers": [
+        "Riot Games"
+      ],
+      "knownModules": [
+        "vgk.sys",
+        "vgc.exe",
+        "Riot Vanguard"
+      ],
       "knownCrashes": [
         {
           "id": "valorant-vanguard",
           "title": "VALORANT crash involving Riot Vanguard",
           "faultingModuleContains": "vg",
           "category": "anticheat",
-          "explanation": "VALORANT depends on Riot Vanguard. A crash or system event involving vgk.sys or vgc.exe should be treated as a Vanguard/service/security compatibility issue first, especially on Windows 11 systems with Secure Boot, TPM, or memory integrity changes.",
-          "evidence": ["Faulting module mentions Vanguard components.", "Process name matches VALORANT or Riot Client."],
-          "checks": ["Exit Vanguard from the tray, reboot, then relaunch Riot Client.", "Check the vgc service is present and running.", "Review recent changes to Secure Boot, TPM, HVCI, antivirus, or other anti-cheats."]
+          "explanation": "VALORANT crashed while Riot Vanguard code was active. The failure happened in the Vanguard service or driver path.",
+          "evidence": [
+            "Faulting module mentions Vanguard components.",
+            "Process name matches VALORANT or Riot Client."
+          ]
         }
       ],
-      "commonCauses": ["Riot Vanguard service or kernel-driver conflicts", "Windows security feature compatibility", "Conflicts with other anti-cheats or low-level tools"],
-      "sources": ["https://support-valorant.riotgames.com/hc/en-us/articles/360048981973-Gathering-Logs-in-VALORANT"]
+      "commonCauses": [
+        "Riot Vanguard service or kernel-driver conflicts",
+        "Windows security feature compatibility",
+        "Conflicts with other anti-cheats or low-level tools"
+      ],
+      "sources": [
+        "https://support-valorant.riotgames.com/hc/en-us/articles/360048981973-Gathering-Logs-in-VALORANT"
+      ]
     },
     {
       "id": "league-of-legends",
       "displayName": "League of Legends",
       "launcher": "Riot Client",
-      "processNames": ["League of Legends.exe", "LeagueClient.exe", "LeagueClientUx.exe"],
-      "installMarkers": ["League of Legends.exe", "LeagueClient.exe"],
-      "publishers": ["Riot Games"],
-      "knownModules": ["vgk.sys", "vgc.exe"],
-      "commonCauses": ["Riot Client patch files", "Vanguard service issues on current League builds", "Overlay conflicts"],
-      "sources": ["https://support-leagueoflegends.riotgames.com/"]
+      "processNames": [
+        "League of Legends.exe",
+        "LeagueClient.exe",
+        "LeagueClientUx.exe"
+      ],
+      "installMarkers": [
+        "League of Legends.exe",
+        "LeagueClient.exe"
+      ],
+      "publishers": [
+        "Riot Games"
+      ],
+      "knownModules": [
+        "vgk.sys",
+        "vgc.exe"
+      ],
+      "knownCrashes": [
+        {
+          "id": "league-vanguard",
+          "title": "League crash or launch failure involving Riot Vanguard",
+          "faultingModuleContains": "vg",
+          "category": "anticheat",
+          "explanation": "League crashed while Riot Vanguard code was active. The failure happened in the Vanguard service or driver path.",
+          "evidence": [
+            "Faulting module or event text mentions Riot Vanguard components.",
+            "Process name matches League of Legends or Riot Client."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Riot Client patch files",
+        "Vanguard service issues on current League builds",
+        "Overlay conflicts"
+      ],
+      "sources": [
+        "https://support-leagueoflegends.riotgames.com/hc/en-us/articles/24169857932435-Riot-Vanguard-League-of-Legends"
+      ]
     },
     {
       "id": "apex-legends",
       "displayName": "Apex Legends",
       "launcher": "Steam / EA app",
       "steamAppId": "1172470",
-      "processNames": ["r5apex.exe", "EasyAntiCheat_EOS.exe"],
-      "installMarkers": ["r5apex.exe"],
-      "publishers": ["Electronic Arts", "Respawn Entertainment"],
-      "knownModules": ["EasyAntiCheat", "OriginSDK", "EAAntiCheat"],
-      "commonCauses": ["Anti-cheat startup failures", "EA app service issues", "Audio or GPU driver conflicts"],
-      "sources": ["https://store.steampowered.com/app/1172470/Apex_Legends/"]
+      "processNames": [
+        "r5apex.exe",
+        "EasyAntiCheat_EOS.exe"
+      ],
+      "installMarkers": [
+        "r5apex.exe"
+      ],
+      "publishers": [
+        "Electronic Arts",
+        "Respawn Entertainment"
+      ],
+      "knownModules": [
+        "EasyAntiCheat",
+        "OriginSDK",
+        "EAAntiCheat"
+      ],
+      "knownCrashes": [
+        {
+          "id": "apex-anticheat",
+          "title": "Apex crash involving Easy Anti-Cheat or EA AntiCheat",
+          "faultingModuleContains": "AntiCheat",
+          "category": "anticheat",
+          "explanation": "Apex crashed while anti-cheat code was active. The failure happened during protection or launch, not ordinary match rendering.",
+          "evidence": [
+            "Faulting module or event text contains AntiCheat.",
+            "Process name matches Apex Legends."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Anti-cheat startup failures",
+        "EA app service issues",
+        "Audio or GPU driver conflicts"
+      ],
+      "sources": [
+        "https://help.ea.com/en/articles/apex-legends/error-codes/",
+        "https://store.steampowered.com/app/1172470/Apex_Legends/"
+      ]
     },
     {
       "id": "counter-strike-2",
       "displayName": "Counter-Strike 2",
       "launcher": "Steam",
       "steamAppId": "730",
-      "processNames": ["cs2.exe"],
-      "installMarkers": ["game\\bin\\win64\\cs2.exe", "cs2.exe"],
-      "publishers": ["Valve"],
-      "knownModules": ["client.dll", "engine2.dll", "materialsystem2.dll"],
+      "processNames": [
+        "cs2.exe"
+      ],
+      "installMarkers": [
+        "game\\bin\\win64\\cs2.exe",
+        "cs2.exe"
+      ],
+      "publishers": [
+        "Valve"
+      ],
+      "knownModules": [
+        "client.dll",
+        "engine2.dll",
+        "materialsystem2.dll"
+      ],
       "knownCrashes": [
         {
           "id": "cs2-source2-module",
           "title": "CS2 crash inside Source 2 game modules",
           "faultingModuleContains": "engine2",
           "category": "application-bug",
-          "explanation": "A Source 2 engine module in the signature means the crash happened inside the game engine layer. Before changing Windows, remove launch options and custom configs, then verify files so the engine binaries and shaders are clean.",
-          "evidence": ["Faulting module contains engine2.", "Steam AppID 730 identifies Counter-Strike 2."],
-          "checks": ["Clear custom launch options.", "Verify game files in Steam.", "Test without workshop or autoexec changes."]
+          "explanation": "Counter-Strike 2 crashed inside a Source 2 engine module. The failure happened in game engine code.",
+          "evidence": [
+            "Faulting module contains engine2.",
+            "Steam AppID 730 identifies Counter-Strike 2."
+          ]
         }
       ],
-      "commonCauses": ["Custom launch options or configs", "Corrupted Steam game files", "GPU driver or shader cache issues"],
-      "sources": ["https://store.steampowered.com/app/730/CounterStrike_2/"]
+      "commonCauses": [
+        "Custom launch options or configs",
+        "Corrupted Steam game files",
+        "GPU driver or shader cache issues"
+      ],
+      "sources": [
+        "https://store.steampowered.com/app/730/CounterStrike_2/"
+      ]
     },
     {
       "id": "call-of-duty",
       "displayName": "Call of Duty / Warzone",
       "launcher": "Battle.net / Steam / Xbox",
       "steamAppId": "1938090",
-      "processNames": ["cod.exe", "ModernWarfare.exe", "Warzone.exe"],
-      "installMarkers": ["cod.exe"],
-      "publishers": ["Activision"],
-      "knownModules": ["cod.exe", "amdxx64.dll", "nvwgf2umx.dll"],
-      "commonCauses": ["Shader cache corruption", "High VRAM pressure", "Anti-cheat or launcher updates"],
-      "sources": ["https://store.steampowered.com/app/1938090/Call_of_Duty/"]
+      "processNames": [
+        "cod.exe",
+        "ModernWarfare.exe",
+        "Warzone.exe"
+      ],
+      "installMarkers": [
+        "cod.exe"
+      ],
+      "publishers": [
+        "Activision"
+      ],
+      "knownModules": [
+        "cod.exe",
+        "amdxx64.dll",
+        "nvwgf2umx.dll"
+      ],
+      "knownCrashes": [
+        {
+          "id": "cod-gpu-driver-module",
+          "title": "Call of Duty crash inside the graphics driver path",
+          "faultingModuleContains": "nvwgf2um",
+          "category": "gpu-driver",
+          "explanation": "Call of Duty crashed while a GPU driver module was active. The failure happened on the graphics path.",
+          "evidence": [
+            "Faulting module contains an NVIDIA graphics driver module.",
+            "Process name matches Call of Duty."
+          ]
+        },
+        {
+          "id": "cod-amd-driver-module",
+          "title": "Call of Duty crash inside AMD DirectX driver code",
+          "faultingModuleContains": "amdxx64",
+          "category": "gpu-driver",
+          "explanation": "Call of Duty crashed while an AMD graphics driver module was active. The failure happened on the graphics path.",
+          "evidence": [
+            "Faulting module contains an AMD DirectX driver module.",
+            "Process name matches Call of Duty."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Shader cache corruption",
+        "High VRAM pressure",
+        "Anti-cheat or launcher updates"
+      ],
+      "sources": [
+        "https://store.steampowered.com/app/1938090/Call_of_Duty/"
+      ]
     },
     {
       "id": "overwatch-2",
       "displayName": "Overwatch 2",
       "launcher": "Battle.net / Steam",
       "steamAppId": "2357570",
-      "processNames": ["Overwatch.exe"],
-      "installMarkers": ["Overwatch.exe"],
-      "publishers": ["Blizzard Entertainment"],
-      "knownModules": ["Overwatch.exe"],
-      "commonCauses": ["Battle.net agent issues", "GPU driver TDR timeouts", "Overlay conflicts"],
-      "sources": ["https://store.steampowered.com/app/2357570/Overwatch_2/"]
+      "processNames": [
+        "Overwatch.exe"
+      ],
+      "installMarkers": [
+        "Overwatch.exe"
+      ],
+      "publishers": [
+        "Blizzard Entertainment"
+      ],
+      "knownModules": [
+        "Overwatch.exe"
+      ],
+      "knownCrashes": [
+        {
+          "id": "overwatch-display-driver",
+          "title": "Overwatch crash near a display driver reset",
+          "faultingModuleContains": "nvwgf2um",
+          "category": "gpu-driver",
+          "explanation": "Overwatch 2 crashed near a display driver failure. The graphics stack was unstable when the game exited.",
+          "evidence": [
+            "Faulting module contains an NVIDIA graphics driver module.",
+            "Process name matches Overwatch."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Battle.net agent issues",
+        "GPU driver TDR timeouts",
+        "Overlay conflicts"
+      ],
+      "sources": [
+        "https://store.steampowered.com/app/2357570/Overwatch_2/"
+      ]
     },
     {
       "id": "destiny-2",
       "displayName": "Destiny 2",
       "launcher": "Steam / Epic",
       "steamAppId": "1085660",
-      "processNames": ["destiny2.exe"],
-      "installMarkers": ["destiny2.exe"],
-      "publishers": ["Bungie"],
-      "knownModules": ["destiny2.exe", "BEService", "BEClient"],
-      "commonCauses": ["BattlEye service issues", "Overlay and capture conflicts", "Corrupted local cache"],
-      "sources": ["https://store.steampowered.com/app/1085660/Destiny_2/"]
+      "processNames": [
+        "destiny2.exe"
+      ],
+      "installMarkers": [
+        "destiny2.exe"
+      ],
+      "publishers": [
+        "Bungie"
+      ],
+      "knownModules": [
+        "destiny2.exe",
+        "BEService",
+        "BEClient"
+      ],
+      "knownCrashes": [
+        {
+          "id": "destiny-battleye",
+          "title": "Destiny 2 crash or launch failure involving BattlEye",
+          "faultingModuleContains": "BattlEye",
+          "category": "anticheat",
+          "explanation": "Destiny 2 crashed while BattlEye code was active. The failure happened in the anti-cheat layer.",
+          "evidence": [
+            "Faulting module or event text mentions BattlEye components.",
+            "Process name matches Destiny 2."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "BattlEye service issues",
+        "Overlay and capture conflicts",
+        "Corrupted local cache"
+      ],
+      "sources": [
+        "https://help.bungie.net/hc/en-us/articles/4404072197140-BattlEye-Anti-Cheat-Support-Guide",
+        "https://help.bungie.net/hc/en-us/articles/4404263349012-Error-Code-PLUOT",
+        "https://store.steampowered.com/app/1085660/Destiny_2/"
+      ]
     },
     {
       "id": "roblox",
       "displayName": "Roblox",
       "launcher": "Roblox Player",
-      "processNames": ["RobloxPlayerBeta.exe", "RobloxStudioBeta.exe"],
-      "installMarkers": ["RobloxPlayerBeta.exe", "RobloxStudioBeta.exe"],
-      "publishers": ["Roblox"],
-      "knownModules": ["RobloxPlayerBeta.exe"],
-      "commonCauses": ["Outdated Roblox client", "Cache corruption", "GPU driver issues"],
-      "sources": ["https://en.help.roblox.com/"]
+      "processNames": [
+        "RobloxPlayerBeta.exe",
+        "RobloxStudioBeta.exe"
+      ],
+      "installMarkers": [
+        "RobloxPlayerBeta.exe",
+        "RobloxStudioBeta.exe"
+      ],
+      "publishers": [
+        "Roblox"
+      ],
+      "knownModules": [
+        "RobloxPlayerBeta.exe"
+      ],
+      "knownCrashes": [
+        {
+          "id": "roblox-graphics",
+          "title": "Roblox crash with a graphics or DirectX clue",
+          "faultingModuleContains": "d3d",
+          "category": "directx",
+          "explanation": "Roblox crashed while graphics code was active. The failure happened during rendering or device setup.",
+          "evidence": [
+            "Faulting module or event text contains a Direct3D clue.",
+            "Process name matches Roblox Player or Studio."
+          ]
+        },
+        {
+          "id": "roblox-client-integrity",
+          "title": "Roblox crash caused by incompatible or modified software",
+          "faultingModuleContains": "blocked image",
+          "category": "anticheat",
+          "explanation": "Roblox crashed during a client integrity or protection check. The failure happened before normal gameplay continued.",
+          "evidence": [
+            "Event text mentions a blocked image or incompatible software.",
+            "Process name matches Roblox Player."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Outdated Roblox client",
+        "Cache corruption",
+        "GPU driver issues"
+      ],
+      "sources": [
+        "https://en.help.roblox.com/hc/en-us/articles/203312790-Graphics-Problems-on-Computers",
+        "https://en.help.roblox.com/hc/en-us/articles/24275616578708-Anti-cheat-Messages",
+        "https://en.help.roblox.com/hc/en-us/articles/41932984382356-Roblox-Error-Failed-to-Load-Library"
+      ]
     },
     {
       "id": "minecraft-java",
       "displayName": "Minecraft Java Edition",
       "launcher": "Minecraft Launcher",
-      "processNames": ["javaw.exe", "java.exe", "MinecraftLauncher.exe"],
-      "installMarkers": [".minecraft\\launcher_profiles.json"],
-      "publishers": ["Mojang", "Microsoft"],
-      "knownModules": ["javaw.exe", "OpenAL", "lwjgl", "atio6axx", "nvoglv"],
-      "commonCauses": ["Java/mod conflicts", "Shader or resource pack issues", "OpenGL driver crashes"],
-      "sources": ["https://help.minecraft.net/"]
+      "processNames": [
+        "javaw.exe",
+        "java.exe",
+        "MinecraftLauncher.exe"
+      ],
+      "installMarkers": [
+        ".minecraft\\launcher_profiles.json"
+      ],
+      "publishers": [
+        "Mojang",
+        "Microsoft"
+      ],
+      "knownModules": [
+        "javaw.exe",
+        "OpenAL",
+        "lwjgl",
+        "atio6axx",
+        "nvoglv"
+      ],
+      "knownCrashes": [
+        {
+          "id": "minecraft-java-opengl",
+          "title": "Minecraft Java crash in OpenGL/LWJGL graphics code",
+          "faultingModuleContains": "lwjgl",
+          "category": "opengl",
+          "explanation": "Minecraft Java crashed while OpenGL code was active. The failure happened on the render path.",
+          "evidence": [
+            "Faulting module mentions LWJGL/OpenGL-related native code.",
+            "Process name is javaw.exe/java.exe with a Minecraft profile marker."
+          ]
+        },
+        {
+          "id": "minecraft-java-opengl-driver",
+          "title": "Minecraft Java crash in the GPU OpenGL driver",
+          "faultingModuleContains": "nvoglv",
+          "category": "gpu-driver",
+          "explanation": "Minecraft Java crashed while a GPU OpenGL driver module was active.",
+          "evidence": [
+            "Faulting module contains a vendor OpenGL driver.",
+            "Process name is javaw.exe/java.exe with Minecraft context."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Java/mod conflicts",
+        "Shader or resource pack issues",
+        "OpenGL driver crashes"
+      ],
+      "sources": [
+        "https://help.minecraft.net/hc/en-us/articles/4409139065613-Mods-for-Minecraft-Java-Edition",
+        "https://help.minecraft.net/hc/en-us/articles/39083573916941",
+        "https://help.minecraft.net/hc/en-us/articles/4409137348877-Minecraft-Java-Edition-Game-Crashes-and-Performance-Issues-FAQ"
+      ]
     },
     {
       "id": "minecraft-bedrock",
       "displayName": "Minecraft for Windows",
       "launcher": "Microsoft Store / Xbox app",
-      "processNames": ["Minecraft.Windows.exe"],
-      "installMarkers": ["Microsoft.MinecraftUWP"],
-      "publishers": ["Mojang", "Microsoft"],
-      "knownModules": ["Minecraft.Windows.exe"],
-      "commonCauses": ["Store app package issues", "GPU driver issues", "Xbox Gaming Services problems"],
-      "sources": ["https://help.minecraft.net/"]
+      "processNames": [
+        "Minecraft.Windows.exe"
+      ],
+      "installMarkers": [
+        "Microsoft.MinecraftUWP"
+      ],
+      "publishers": [
+        "Mojang",
+        "Microsoft"
+      ],
+      "knownModules": [
+        "Minecraft.Windows.exe"
+      ],
+      "knownCrashes": [
+        {
+          "id": "minecraft-bedrock-store-package",
+          "title": "Minecraft for Windows crash in the Store/Xbox app package path",
+          "faultingModuleContains": "Minecraft.Windows",
+          "category": "network-or-launcher",
+          "explanation": "Minecraft Bedrock crashed inside the Store package path. Gaming Services or package state may be part of the failure.",
+          "evidence": [
+            "Faulting application is Minecraft.Windows.exe.",
+            "Game profile is the Microsoft Store/Xbox edition."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Store app package issues",
+        "GPU driver issues",
+        "Xbox Gaming Services problems"
+      ],
+      "sources": [
+        "https://help.minecraft.net/"
+      ]
     },
     {
       "id": "dota-2",
       "displayName": "Dota 2",
       "launcher": "Steam",
       "steamAppId": "570",
-      "processNames": ["dota2.exe"],
-      "installMarkers": ["game\\bin\\win64\\dota2.exe", "dota2.exe"],
-      "publishers": ["Valve"],
-      "knownModules": ["client.dll", "engine2.dll"],
-      "commonCauses": ["Source 2 engine module crashes", "Custom configs", "GPU driver issues"],
-      "sources": ["https://store.steampowered.com/app/570/Dota_2/"]
+      "processNames": [
+        "dota2.exe"
+      ],
+      "installMarkers": [
+        "game\\bin\\win64\\dota2.exe",
+        "dota2.exe"
+      ],
+      "publishers": [
+        "Valve"
+      ],
+      "knownModules": [
+        "client.dll",
+        "engine2.dll"
+      ],
+      "knownCrashes": [
+        {
+          "id": "dota2-source2-module",
+          "title": "Dota 2 crash inside Source 2 engine modules",
+          "faultingModuleContains": "engine2",
+          "category": "application-bug",
+          "explanation": "Dota 2 crashed inside a Source 2 engine module. The failure happened in game engine code.",
+          "evidence": [
+            "Faulting module contains a Source 2 engine/client module.",
+            "Steam AppID 570 identifies Dota 2."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Source 2 engine module crashes",
+        "Custom configs",
+        "GPU driver issues"
+      ],
+      "sources": [
+        "https://store.steampowered.com/app/570/Dota_2/"
+      ]
     },
     {
       "id": "pubg",
       "displayName": "PUBG: BATTLEGROUNDS",
       "launcher": "Steam / Epic",
       "steamAppId": "578080",
-      "processNames": ["TslGame.exe", "ExecPubg.exe", "TslGame_BE.exe"],
-      "installMarkers": ["TslGame\\Binaries\\Win64\\TslGame.exe"],
-      "publishers": ["KRAFTON"],
-      "knownModules": ["BEService", "BEClient", "TslGame.exe"],
-      "commonCauses": ["BattlEye issues", "Unreal Engine rendering crashes", "Overlay conflicts"],
-      "sources": ["https://store.steampowered.com/app/578080/PUBG_BATTLEGROUNDS/"]
+      "processNames": [
+        "TslGame.exe",
+        "ExecPubg.exe",
+        "TslGame_BE.exe"
+      ],
+      "installMarkers": [
+        "TslGame\\Binaries\\Win64\\TslGame.exe"
+      ],
+      "publishers": [
+        "KRAFTON"
+      ],
+      "knownModules": [
+        "BEService",
+        "BEClient",
+        "TslGame.exe"
+      ],
+      "knownCrashes": [
+        {
+          "id": "pubg-battleye",
+          "title": "PUBG crash involving BattlEye",
+          "faultingModuleContains": "BattlEye",
+          "category": "anticheat",
+          "explanation": "PUBG crashed while BattlEye code was active. The failure happened in the anti-cheat layer.",
+          "evidence": [
+            "Faulting module or event text mentions BattlEye.",
+            "Process name matches PUBG."
+          ]
+        },
+        {
+          "id": "pubg-unreal-module",
+          "title": "PUBG crash in the Unreal game executable",
+          "faultingModuleContains": "TslGame",
+          "category": "application-bug",
+          "explanation": "PUBG crashed inside an Unreal module. The failure happened in game engine code.",
+          "evidence": [
+            "Faulting module contains TslGame.",
+            "Process name matches PUBG."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "BattlEye issues",
+        "Unreal Engine rendering crashes",
+        "Overlay conflicts"
+      ],
+      "sources": [
+        "https://store.steampowered.com/app/578080/PUBG_BATTLEGROUNDS/"
+      ]
     },
     {
       "id": "rainbow-six-siege",
       "displayName": "Tom Clancy's Rainbow Six Siege",
       "launcher": "Ubisoft Connect / Steam",
       "steamAppId": "359550",
-      "processNames": ["RainbowSix.exe", "RainbowSix_BE.exe"],
-      "installMarkers": ["RainbowSix.exe", "RainbowSix_BE.exe"],
-      "publishers": ["Ubisoft"],
-      "knownModules": ["BEService", "BEClient", "RainbowSix.exe"],
-      "commonCauses": ["BattlEye service conflicts", "Vulkan/DirectX renderer differences", "Overlay conflicts"],
-      "sources": ["https://store.steampowered.com/app/359550/Tom_Clancys_Rainbow_Six_Siege/"]
+      "processNames": [
+        "RainbowSix.exe",
+        "RainbowSix_BE.exe"
+      ],
+      "installMarkers": [
+        "RainbowSix.exe",
+        "RainbowSix_BE.exe"
+      ],
+      "publishers": [
+        "Ubisoft"
+      ],
+      "knownModules": [
+        "BEService",
+        "BEClient",
+        "RainbowSix.exe"
+      ],
+      "knownCrashes": [
+        {
+          "id": "r6-battleye",
+          "title": "Rainbow Six Siege crash involving BattlEye",
+          "faultingModuleContains": "BattlEye",
+          "category": "anticheat",
+          "explanation": "Rainbow Six Siege crashed while BattlEye code was active. The failure happened in the anti-cheat layer.",
+          "evidence": [
+            "Faulting module or event text mentions BattlEye.",
+            "Process name matches RainbowSix or RainbowSix_BE."
+          ]
+        },
+        {
+          "id": "r6-renderer-switch",
+          "title": "Rainbow Six Siege crash tied to renderer path",
+          "faultingModuleContains": "RainbowSix",
+          "category": "application-bug",
+          "explanation": "Rainbow Six Siege crashed inside renderer or engine code. The failure happened in the game render path.",
+          "evidence": [
+            "Faulting module contains RainbowSix.",
+            "No stronger anti-cheat or GPU module matched first."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "BattlEye service conflicts",
+        "Vulkan/DirectX renderer differences",
+        "Overlay conflicts"
+      ],
+      "sources": [
+        "https://www.battleye.org/support/faq/",
+        "https://store.steampowered.com/app/359550/Tom_Clancys_Rainbow_Six_Siege/"
+      ]
     },
     {
       "id": "grand-theft-auto-v",
       "displayName": "Grand Theft Auto V Enhanced",
       "launcher": "Rockstar Games Launcher / Steam / Epic",
       "steamAppId": "271590",
-      "processNames": ["GTA5.exe", "PlayGTAV.exe", "GTAVLauncher.exe"],
-      "installMarkers": ["GTA5.exe"],
-      "publishers": ["Rockstar Games"],
-      "knownModules": ["GTA5.exe", "SocialClub", "RAGE"],
-      "commonCauses": ["Rockstar launcher issues", "Modded file conflicts", "GPU driver crashes"],
-      "sources": ["https://store.steampowered.com/app/271590/Grand_Theft_Auto_V_Enhanced/"]
+      "processNames": [
+        "GTA5.exe",
+        "PlayGTAV.exe",
+        "GTAVLauncher.exe"
+      ],
+      "installMarkers": [
+        "GTA5.exe"
+      ],
+      "publishers": [
+        "Rockstar Games"
+      ],
+      "knownModules": [
+        "GTA5.exe",
+        "SocialClub",
+        "RAGE"
+      ],
+      "knownCrashes": [
+        {
+          "id": "gtav-err-gfx-state",
+          "title": "GTA V crash with ERR_GFX_STATE",
+          "faultingModuleContains": "ERR_GFX_STATE",
+          "category": "gpu-driver",
+          "explanation": "GTA V crashed with a graphics state failure. The render path was in a bad state when the game exited.",
+          "evidence": [
+            "Event text contains ERR_GFX_STATE.",
+            "Process name matches GTA V."
+          ]
+        },
+        {
+          "id": "gtav-socialclub",
+          "title": "GTA V crash involving Rockstar Social Club or launcher code",
+          "faultingModuleContains": "SocialClub",
+          "category": "network-or-launcher",
+          "explanation": "GTA V crashed while Rockstar launcher or Social Club code was active.",
+          "evidence": [
+            "Faulting module mentions SocialClub or Rockstar launcher components.",
+            "Process name matches GTA V."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Rockstar launcher issues",
+        "Modded file conflicts",
+        "GPU driver crashes"
+      ],
+      "sources": [
+        "https://support.rockstargames.com/articles/2vEOZW3tzshakakcwRvakg/grand-theft-auto-v-on-pc-crashing-with-err_gfx_state-error",
+        "https://store.steampowered.com/app/271590/Grand_Theft_Auto_V_Enhanced/"
+      ]
     },
     {
       "id": "rocket-league",
       "displayName": "Rocket League",
       "launcher": "Epic Games Launcher",
-      "processNames": ["RocketLeague.exe"],
-      "installMarkers": ["Binaries\\Win64\\RocketLeague.exe"],
-      "publishers": ["Psyonix", "Epic Games"],
-      "knownModules": ["RocketLeague.exe", "EOSSDK-Win64-Shipping.dll"],
-      "commonCauses": ["Epic Online Services overlay", "Corrupted cache", "GPU driver issues"],
-      "sources": ["https://www.epicgames.com/help/rocket-league-c5719357623323"]
+      "processNames": [
+        "RocketLeague.exe"
+      ],
+      "installMarkers": [
+        "Binaries\\Win64\\RocketLeague.exe"
+      ],
+      "publishers": [
+        "Psyonix",
+        "Epic Games"
+      ],
+      "knownModules": [
+        "RocketLeague.exe",
+        "EOSSDK-Win64-Shipping.dll"
+      ],
+      "knownCrashes": [
+        {
+          "id": "rocketleague-eos",
+          "title": "Rocket League crash involving Epic Online Services",
+          "faultingModuleContains": "EOSSDK",
+          "category": "network-or-launcher",
+          "explanation": "Rocket League crashed while Epic Online Services code was active. The failure happened in the online services layer.",
+          "evidence": [
+            "Faulting module contains EOSSDK.",
+            "Process name matches Rocket League."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Epic Online Services overlay",
+        "Corrupted cache",
+        "GPU driver issues"
+      ],
+      "sources": [
+        "https://www.epicgames.com/help/rocket-league-c5719357623323"
+      ]
     },
     {
       "id": "the-finals",
       "displayName": "THE FINALS",
       "launcher": "Steam",
       "steamAppId": "2073850",
-      "processNames": ["Discovery.exe"],
-      "installMarkers": ["Discovery\\Binaries\\Win64\\Discovery.exe", "Discovery.exe"],
-      "publishers": ["Embark Studios"],
-      "knownModules": ["Discovery.exe", "EasyAntiCheat"],
-      "commonCauses": ["Easy Anti-Cheat issues", "Unreal Engine crashes", "GPU driver or shader cache issues"],
-      "sources": ["https://store.steampowered.com/app/2073850/THE_FINALS/"]
+      "processNames": [
+        "Discovery.exe"
+      ],
+      "installMarkers": [
+        "Discovery\\Binaries\\Win64\\Discovery.exe",
+        "Discovery.exe"
+      ],
+      "publishers": [
+        "Embark Studios"
+      ],
+      "knownModules": [
+        "Discovery.exe",
+        "EasyAntiCheat"
+      ],
+      "knownCrashes": [
+        {
+          "id": "the-finals-eac",
+          "title": "THE FINALS crash involving Easy Anti-Cheat",
+          "faultingModuleContains": "EasyAntiCheat",
+          "category": "anticheat",
+          "explanation": "THE FINALS crashed while Easy Anti-Cheat code was active. The failure happened in the anti-cheat layer.",
+          "evidence": [
+            "Faulting module or event text contains EasyAntiCheat.",
+            "Process name matches THE FINALS."
+          ]
+        },
+        {
+          "id": "the-finals-unreal",
+          "title": "THE FINALS crash in Unreal game executable",
+          "faultingModuleContains": "Discovery",
+          "category": "application-bug",
+          "explanation": "THE FINALS crashed inside an Unreal module. The failure happened in game engine code.",
+          "evidence": [
+            "Faulting module contains Discovery.",
+            "Process name matches THE FINALS."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Easy Anti-Cheat issues",
+        "Unreal Engine crashes",
+        "GPU driver or shader cache issues"
+      ],
+      "sources": [
+        "https://store.steampowered.com/app/2073850/THE_FINALS/"
+      ]
     },
     {
       "id": "helldivers-2",
       "displayName": "HELLDIVERS 2",
       "launcher": "Steam",
       "steamAppId": "553850",
-      "processNames": ["helldivers2.exe"],
-      "installMarkers": ["bin\\helldivers2.exe", "helldivers2.exe"],
-      "publishers": ["PlayStation Publishing LLC"],
-      "knownModules": ["helldivers2.exe", "GameGuard"],
-      "commonCauses": ["Anti-cheat initialization", "GPU driver crashes", "Game file corruption"],
-      "sources": ["https://store.steampowered.com/app/553850/HELLDIVERS_2/"]
+      "processNames": [
+        "helldivers2.exe"
+      ],
+      "installMarkers": [
+        "bin\\helldivers2.exe",
+        "helldivers2.exe"
+      ],
+      "publishers": [
+        "PlayStation Publishing LLC"
+      ],
+      "knownModules": [
+        "helldivers2.exe",
+        "GameGuard"
+      ],
+      "knownCrashes": [
+        {
+          "id": "helldivers2-gameguard",
+          "title": "HELLDIVERS 2 crash involving GameGuard",
+          "faultingModuleContains": "GameGuard",
+          "category": "anticheat",
+          "explanation": "Helldivers 2 crashed while GameGuard code was active. The failure happened in the anti-cheat layer.",
+          "evidence": [
+            "Faulting module or event text mentions GameGuard.",
+            "Process name matches HELLDIVERS 2."
+          ]
+        },
+        {
+          "id": "helldivers2-gpu-driver",
+          "title": "HELLDIVERS 2 crash in graphics driver path",
+          "faultingModuleContains": "nvwgf2um",
+          "category": "gpu-driver",
+          "explanation": "Helldivers 2 crashed while a GPU driver module was active. The failure happened on the graphics path.",
+          "evidence": [
+            "Faulting module contains an NVIDIA graphics driver module.",
+            "Process name matches HELLDIVERS 2."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Anti-cheat initialization",
+        "GPU driver crashes",
+        "Game file corruption"
+      ],
+      "sources": [
+        "https://store.steampowered.com/app/553850/HELLDIVERS_2/"
+      ]
     },
     {
       "id": "palworld",
       "displayName": "Palworld",
       "launcher": "Steam / Xbox app",
       "steamAppId": "1623730",
-      "processNames": ["Palworld-Win64-Shipping.exe", "Palworld.exe"],
-      "installMarkers": ["Pal\\Binaries\\Win64\\Palworld-Win64-Shipping.exe"],
-      "publishers": ["Pocketpair"],
-      "knownModules": ["Palworld-Win64-Shipping.exe", "UnrealEngine"],
-      "commonCauses": ["Unreal Engine crash", "Mods or server mismatch", "GPU driver instability"],
-      "sources": ["https://store.steampowered.com/app/1623730/Palworld/"]
+      "processNames": [
+        "Palworld-Win64-Shipping.exe",
+        "Palworld.exe"
+      ],
+      "installMarkers": [
+        "Pal\\Binaries\\Win64\\Palworld-Win64-Shipping.exe"
+      ],
+      "publishers": [
+        "Pocketpair"
+      ],
+      "knownModules": [
+        "Palworld-Win64-Shipping.exe",
+        "UnrealEngine"
+      ],
+      "knownCrashes": [
+        {
+          "id": "palworld-unreal-shipping",
+          "title": "Palworld crash in the Unreal shipping executable",
+          "faultingModuleContains": "Palworld-Win64-Shipping",
+          "category": "application-bug",
+          "explanation": "Palworld crashed inside the Unreal shipping executable. The failure happened in game or engine code.",
+          "evidence": [
+            "Faulting module contains Palworld-Win64-Shipping.",
+            "Process name matches Palworld."
+          ]
+        }
+      ],
+      "commonCauses": [
+        "Unreal Engine crash",
+        "Mods or server mismatch",
+        "GPU driver instability"
+      ],
+      "sources": [
+        "https://store.steampowered.com/app/1623730/Palworld/"
+      ]
     }
   ]
 }

@@ -6,6 +6,8 @@ Game support, crash signatures, Windows event notes, and follow up checks live i
 
 Research and community support: https://discord.gg/lumin
 
+<img src="readme%20image.png" alt="Crash Detector app screenshot" width="900">
+
 ## Features
 
 - Scan Windows Application and System logs.
@@ -13,6 +15,7 @@ Research and community support: https://discord.gg/lumin
 - Group related crash events into readable signatures.
 - Show evidence, likely meaning, follow up checks, and raw Event Viewer messages.
 - Detect supported installed games from Steam, Epic, and common local markers.
+- Explain documented game-specific crash paths for anti-cheat, launcher/service, engine, graphics-driver, Java/OpenGL, and Store/Xbox package failures.
 - Pick a specific `.exe` and scan for crashes tied to that process.
 - Export the current report as JSON or TXT.
 - Extend game and crash knowledge through documented JSON files.
@@ -59,6 +62,8 @@ data/crash-signatures.json   Windows event definitions, exception codes, bug che
 ```
 
 Because these files are regular JSON, adding support for a new game or crash code usually does not require changing JavaScript.
+
+The included game pack currently documents 19 supported games with at least one specific known-crash interpretation for each. The Windows pack covers Application Error/Hang/WER, .NET runtime failures, Service Control Manager failures, Kernel-Power and unexpected shutdown markers, Display 4101, disk warnings, WHEA hardware errors, common NTSTATUS exception codes, and common blue-screen bug checks.
 
 ## Add Game Data
 

@@ -140,8 +140,8 @@ function renderResult(result) {
     els.detailPanel.innerHTML = `
       <div class="empty-detail">
         <div class="empty-icon ok" aria-hidden="true">OK</div>
-        <h3>No crash signatures in this window</h3>
-        <p>Try choosing a specific executable, widening the lookback, or scanning again after reproducing the crash.</p>
+        <h3>No matches in this window</h3>
+        <p>Try a specific EXE or widen the lookback.</p>
       </div>
     `;
     return;
@@ -173,7 +173,6 @@ function renderResultItem(group, index) {
   const moduleName = event.faultingModule || event.bugCheckCode || event.providerName || "Unknown signature";
   return `
     <button class="result-item" data-index="${index}" data-category="${escapeHtml(event.category)}" type="button">
-      <span class="severity">${escapeHtml(event.confidence || "Low")}</span>
       <strong>${escapeHtml(event.displayName || "Unknown crash")}</strong>
       <span>${escapeHtml(event.categoryLabel || "Unknown")} - ${escapeHtml(moduleName)}</span>
       <small>${formatDate(group.lastSeen)} - ${group.count} event${group.count === 1 ? "" : "s"}</small>
@@ -188,53 +187,46 @@ function renderDetail(group, index) {
     ["Module", event.faultingModule || "Unknown"],
     ["Exception", event.exceptionCode || "None"],
     ["BugCheck", event.bugCheckCode || "None"],
-    ["Provider", `${event.providerName || "Unknown"} ${event.eventId || ""}`],
+    ["Provider", `${event.providerName || "Unknown"} ${event.eventId || ""}`.trim()],
     ["Report", event.reportId || event.werEventName || "None"]
-  ];
+  ].filter(([, value]) => value && value !== "None" && value !== "Unknown");
 
   return `
-    <div class="detail-head" data-category="${escapeHtml(event.category)}">
-      <div>
+    <div class="detail-body">
+      <header class="detail-head" data-category="${escapeHtml(event.category)}">
         <p class="kicker">${escapeHtml(event.categoryLabel || "Unknown")}</p>
         <h3>${escapeHtml(event.displayName || "Unknown crash")}</h3>
-        <span>${formatDate(group.lastSeen)} - ${group.count} related event${group.count === 1 ? "" : "s"}</span>
-      </div>
-      <div class="detail-actions">
-        <div class="confidence-pill">${escapeHtml(event.confidence || "Low")} confidence</div>
-        <button class="secondary compact" type="button" data-export-format="txt" data-group-index="${index}">Save TXT</button>
-        <button class="secondary compact" type="button" data-export-format="json" data-group-index="${index}">Save JSON</button>
-      </div>
-    </div>
-
-    <section class="explain-block">
-      <h4>What this probably means</h4>
-      <p>${escapeHtml(event.detailedExplanation || "No explanation available yet.")}</p>
-    </section>
-
-    <section class="fact-grid">
-      ${details.map(([label, value]) => `
-        <div>
-          <span>${escapeHtml(label)}</span>
-          <code title="${escapeHtml(value)}">${escapeHtml(value)}</code>
+        <p class="detail-meta">${formatDate(group.lastSeen)} - ${group.count} related event${group.count === 1 ? "" : "s"}</p>
+        <div class="detail-actions">
+          <button class="export-btn" type="button" data-export-format="txt" data-group-index="${index}">Save TXT</button>
+          <button class="export-btn" type="button" data-export-format="json" data-group-index="${index}">Save JSON</button>
         </div>
-      `).join("")}
-    </section>
+      </header>
 
-    <section class="two-column">
-      <div>
+      <section class="detail-section explain-block">
+        <h4>What went wrong</h4>
+        <p>${escapeHtml(event.detailedExplanation || "This crash is not documented yet.")}</p>
+      </section>
+
+      <section class="detail-section fact-grid">
+        ${details.map(([label, value]) => `
+          <div>
+            <span>${escapeHtml(label)}</span>
+            <code title="${escapeHtml(value)}">${escapeHtml(value)}</code>
+          </div>
+        `).join("")}
+      </section>
+
+      <section class="detail-section evidence-block">
         <h4>Evidence</h4>
         <ul>${listItems(event.evidence)}</ul>
-      </div>
-      <div>
-        <h4>Follow-up checks</h4>
-        <ul>${listItems(event.followUpChecks)}</ul>
-      </div>
-    </section>
+      </section>
 
-    <details class="raw-events">
-      <summary>Raw events in this signature</summary>
-      <pre>${escapeHtml(group.events.map(formatRawEvent).join("\n\n---\n\n"))}</pre>
-    </details>
+      <details class="detail-section raw-events">
+        <summary>Raw events in this signature</summary>
+        <pre>${escapeHtml(group.events.map(formatRawEvent).join("\n\n---\n\n"))}</pre>
+      </details>
+    </div>
   `;
 }
 
@@ -336,7 +328,7 @@ function formatDayLabel(days) {
 }
 
 function listItems(items = []) {
-  if (!items.length) return "<li>No specific items captured yet.</li>";
+  if (!items.length) return "<li>No evidence captured yet.</li>";
   return [...new Set(items)].slice(0, 7).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
 }
 
@@ -410,16 +402,11 @@ function createPreviewBridge() {
               categoryLabel: "Graphics driver",
               confidence: "High",
               matchedGame: { displayName: "Fortnite" },
-              detailedExplanation: "The structured EventData points to Fortnite crashing inside NVIDIA's user-mode graphics driver. That usually means the rendering path failed during gameplay, shader work, or presentation. The game is the app that fell over, but this signature is stronger evidence for the graphics stack than for a random Fortnite reinstall.",
+              detailedExplanation: "Fortnite crashed while the NVIDIA user-mode graphics driver was active. The failure happened on the graphics rendering path.",
               evidence: [
                 "Application Error 1000 contained AppName, ModuleName, and ExceptionCode fields.",
                 "Faulting module contains nvwgf2umx.",
                 "Exception 0xc0000005 matched STATUS_ACCESS_VIOLATION."
-              ],
-              followUpChecks: [
-                "Check whether Display 4101 appears near the same time.",
-                "Clean-install the GPU driver if this repeats.",
-                "Disable overlays for one launch test."
               ],
               message: "Preview data. Electron scans real Event Viewer records."
             },

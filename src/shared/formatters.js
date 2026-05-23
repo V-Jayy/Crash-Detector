@@ -13,15 +13,11 @@ function crashToPlainText(result) {
     if (event.bugCheckCode) lines.push(`BugCheck: ${event.bugCheckCode}`);
     if (event.faultingModule) lines.push(`Faulting module: ${event.faultingModule}`);
     lines.push("");
-    lines.push(event.detailedExplanation || "No detailed explanation available.");
+    lines.push(event.detailedExplanation || "No explanation available.");
     lines.push("");
     if (event.evidence?.length) {
       lines.push("Evidence:");
       event.evidence.forEach((item) => lines.push(`- ${item}`));
-    }
-    if (event.followUpChecks?.length) {
-      lines.push("Follow-up checks:");
-      event.followUpChecks.forEach((item) => lines.push(`- ${item}`));
     }
     lines.push("");
   }

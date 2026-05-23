@@ -1,6 +1,7 @@
 const CATEGORY_LABELS = {
   "gpu-driver": "Graphics driver",
   directx: "DirectX",
+  opengl: "OpenGL",
   anticheat: "Anti-cheat",
   "corrupt-files": "Corrupt files",
   memory: "Memory",
@@ -22,7 +23,6 @@ function analyzeEvent(event, games, signatures) {
     category: "unknown",
     confidence: "Low",
     evidence: [],
-    followUpChecks: [],
     sources: [],
     detailedExplanation: null,
     matchedSignatureTitle: null
@@ -38,9 +38,8 @@ function analyzeEvent(event, games, signatures) {
   applyGameKnowledge(enriched);
 
   if (enriched.category === "unknown") {
-    enriched.detailedExplanation ||= "This crash does not match a documented signature yet. The safest next step is to compare repeated events: same process, same module, same exception code, and same time window. A single unknown Application Error is weak evidence; a repeated signature is worth deeper debugging.";
+    enriched.detailedExplanation ||= "Windows logged a crash, but this process, module, and exception code do not match a documented signature yet.";
     enriched.evidence.push("No documented exception, module, game, or bug check signature matched.");
-    enriched.followUpChecks.push("Export this crash and compare it with the next occurrence.");
   }
 
   enriched.categoryLabel = CATEGORY_LABELS[enriched.category] || CATEGORY_LABELS.unknown;
@@ -103,23 +102,20 @@ function applySystemEvent(event) {
   if (event.eventId === 41 || event.eventId === 6008) {
     event.category = "power-or-overclock";
     event.confidence = maxConfidence(event.confidence, "Medium");
-    event.detailedExplanation ||= "This is a system-level shutdown/reboot marker. It tells you the machine did not stop cleanly, but it does not prove power loss by itself. Check the surrounding minutes for BugCheck 1001, WHEA hardware errors, Display 4101 resets, disk warnings, and thermal or overclock changes.";
+    event.detailedExplanation ||= "Windows recorded an unclean shutdown or reboot. The machine stopped without a normal shutdown path.";
     event.evidence.push(`System event ${event.eventId} marks an unclean shutdown path.`);
-    event.followUpChecks.push("Scan the same time range with system checks enabled and review nearby hardware, display, and disk events.");
   }
 
   if (/WHEA-Logger/i.test(event.providerName || "")) {
     event.category = "hardware";
     event.confidence = maxConfidence(event.confidence, "High");
-    event.detailedExplanation ||= "A WHEA event means Windows received a hardware error report. If this lines up with game crashes, treat stability, BIOS, CPU, RAM, PCIe, and GPU hardware paths as suspects before blaming the game.";
-    event.followUpChecks.push("Review the WHEA message for APIC ID, cache hierarchy, PCIe, or memory clues.");
+    event.detailedExplanation ||= "Windows logged a hardware error through WHEA. The event details should name the failing component.";
   }
 
   if (/Disk/i.test(event.providerName || "")) {
     event.category = "storage";
     event.confidence = maxConfidence(event.confidence, "Medium");
-    event.detailedExplanation ||= "A disk warning near a crash can make game assets, shader caches, save files, or the page file unreliable. Storage events are worth checking before repeated repair installs.";
-    event.followUpChecks.push("Check SMART health and run the game from a known-good disk if the warnings repeat.");
+    event.detailedExplanation ||= "Windows logged a disk warning near this crash. Storage or paging on that volume may have been unstable when the app failed.";
   }
 }
 
@@ -137,11 +133,10 @@ function applyGameKnowledge(event) {
     event.matchedSignatureTitle = signature.title;
     event.detailedExplanation = signature.explanation || event.detailedExplanation;
     event.evidence.push(...(signature.evidence || []));
-    event.followUpChecks.push(...(signature.checks || []));
     event.sources.push(...(signature.sources || []));
   } else if (event.category === "unknown" && (game.commonCauses || []).length) {
     event.confidence = maxConfidence(event.confidence, "Medium");
-    event.detailedExplanation ||= `${game.displayName} matched the process name, but this exact crash signature is not documented yet. Common areas for this title include ${game.commonCauses.join(", ")}. Use the module and exception code to narrow it down before taking broad repair steps.`;
+    event.detailedExplanation ||= `${game.displayName} is the process that crashed, but this module and exception code are not in our documented signatures yet.`;
   }
 }
 
@@ -161,7 +156,6 @@ function applyKnowledgeMatch(event, match, evidence) {
   event.confidence = maxConfidence(event.confidence, match.confidence || "Medium");
   event.detailedExplanation = match.explanation || event.detailedExplanation;
   event.evidence.push(evidence);
-  event.followUpChecks.push(...(match.checks || []));
   event.sources.push(...(match.sources || []));
 }
 

@@ -84,6 +84,34 @@
       "eventId": 18,
       "kind": "hardware-error",
       "explanation": "Windows Hardware Error Architecture logged a fatal hardware error. CPU, RAM, PCIe, GPU, BIOS, or voltage instability can be involved."
+    },
+    {
+      "logName": "System",
+      "providerName": "Service Control Manager",
+      "eventId": 7000,
+      "kind": "service-start-failure",
+      "explanation": "A Windows service failed to start. Around game launch this is especially useful for anti-cheat, launcher, driver, VPN, RGB, and update services."
+    },
+    {
+      "logName": "System",
+      "providerName": "Service Control Manager",
+      "eventId": 7001,
+      "kind": "service-dependency-failure",
+      "explanation": "A service could not start because a dependency failed. If a game launcher or anti-cheat service appears nearby, inspect the earlier dependency failure first."
+    },
+    {
+      "logName": "System",
+      "providerName": "Service Control Manager",
+      "eventId": 7031,
+      "kind": "service-crash",
+      "explanation": "A service terminated unexpectedly. Repeated service crashes near a game crash can explain launcher, anti-cheat, audio, network, or device-driver failures."
+    },
+    {
+      "logName": "System",
+      "providerName": "Service Control Manager",
+      "eventId": 7034,
+      "kind": "service-crash",
+      "explanation": "A service terminated unexpectedly without a clean recovery path. Check the service name and nearby events before blaming the foreground game."
     }
   ],
   "exceptionCodes": [
@@ -92,91 +120,100 @@
       "name": "STATUS_ACCESS_VIOLATION",
       "category": "access-violation",
       "confidence": "Medium",
-      "explanation": "The process tried to read, write, or execute memory it was not allowed to touch. In games this commonly appears when a driver, overlay, injected DLL, mod, corrupt asset, or engine bug hands the process a bad pointer. The faulting module matters more than the code alone: if the module is a GPU DLL, treat it like a graphics path problem; if it is an anti-cheat DLL, focus on services and security conflicts; if it is the game executable, verify files and remove mods first.",
-      "checks": [
-        "Compare the faulting module across repeated crashes.",
-        "Disable overlays and capture tools for one clean test.",
-        "Verify game files before reinstalling the whole game."
-      ],
-      "sources": ["microsoft-ms-erref"]
+      "explanation": "The process tried to use memory it did not own. The faulting module shows where the bad access happened.",
+      "sources": [
+        "microsoft-ms-erref"
+      ]
     },
     {
       "code": "0xc0000374",
       "name": "STATUS_HEAP_CORRUPTION",
       "category": "corrupt-files",
       "confidence": "Medium",
-      "explanation": "The Windows heap manager detected corrupted heap metadata. That usually means something wrote past an allocation, freed memory twice, or damaged process memory before the crash was reported. For games, start with mods, overlays, unstable RAM or XMP/EXPO settings, and corrupted local files.",
-      "checks": [
-        "Retest without mods, reshade, injectors, and overlays.",
-        "Run the launcher repair/verify action.",
-        "If many unrelated apps show this code, test memory stability."
-      ],
-      "sources": ["microsoft-ms-erref"]
+      "explanation": "Windows found corrupted heap memory in this process. Something damaged memory before the crash was logged.",
+      "sources": [
+        "microsoft-ms-erref"
+      ]
     },
     {
       "code": "0xc0000409",
       "name": "STATUS_STACK_BUFFER_OVERRUN",
       "category": "application-bug",
       "confidence": "Medium",
-      "explanation": "Windows terminated the process after detecting stack corruption or a security cookie failure. This can be a real app bug, an incompatible hook, or a broken injected module. It is less useful as a standalone code than as a repeated signature with the same module.",
-      "checks": [
-        "Check whether the same module appears each time.",
-        "Remove overlays, recording tools, and third-party injectors.",
-        "Update the affected game or launcher before changing system settings."
-      ],
-      "sources": ["microsoft-ms-erref"]
+      "explanation": "Windows stopped the process because stack memory was corrupted. Invalid code or a broken module likely ran inside the app.",
+      "sources": [
+        "microsoft-ms-erref"
+      ]
     },
     {
       "code": "0xc000001d",
       "name": "STATUS_ILLEGAL_INSTRUCTION",
       "category": "application-bug",
       "confidence": "Medium",
-      "explanation": "The CPU was asked to execute an instruction it could not decode or was not allowed to run. This can happen with CPU feature mismatches, damaged code in memory, aggressive overclocks, or old CPUs running builds that expect newer instruction sets.",
-      "checks": [
-        "Check the game's minimum CPU feature requirements.",
-        "Remove CPU and RAM overclocks for a test run.",
-        "Verify files so damaged binaries are replaced."
-      ],
-      "sources": ["microsoft-ms-erref"]
+      "explanation": "The CPU hit an instruction it could not run. That can mean bad code in memory, a broken module, or a CPU feature mismatch.",
+      "sources": [
+        "microsoft-ms-erref"
+      ]
     },
     {
       "code": "0xe0434352",
       "name": ".NET CLR exception",
       "category": "dotnet-runtime",
       "confidence": "Medium",
-      "explanation": "A managed .NET exception escaped the app. The useful clue is usually in the nearby .NET Runtime Event ID 1026 message, where Windows may include the exception type and stack trace. Treat the native Application Error as a pointer to the managed failure rather than the root cause by itself.",
-      "checks": [
-        "Open the paired .NET Runtime 1026 event and read the first exception line.",
-        "Update or repair the launcher or tool that crashed.",
-        "If it is your app, capture a full stack trace or local dump."
-      ],
-      "sources": ["microsoft-application-crash"]
+      "explanation": "A .NET app threw an unhandled managed exception. The Application Error marks the exit, while the managed details live in the .NET Runtime event.",
+      "sources": [
+        "microsoft-application-crash"
+      ]
     },
     {
       "code": "0xc00000fd",
       "name": "STATUS_STACK_OVERFLOW",
       "category": "application-bug",
       "confidence": "Medium",
-      "explanation": "The process exhausted its thread stack. Recursive scripts, broken plugins, bad UI loops, or engine bugs can cause this. In modded games, this is a strong reason to test a clean profile.",
-      "checks": [
-        "Disable mods or plugins and retest.",
-        "Look for repeated startup crashes after loading the same content.",
-        "Update the game and any script extender or mod loader."
-      ],
-      "sources": ["microsoft-ms-erref"]
+      "explanation": "This process ran out of thread stack space. That often means broken scripts, plugins, or a runaway loop inside the app.",
+      "sources": [
+        "microsoft-ms-erref"
+      ]
     },
     {
       "code": "0x80000003",
       "name": "STATUS_BREAKPOINT",
       "category": "application-bug",
       "confidence": "Low",
-      "explanation": "The app hit a breakpoint exception. This can be intentional in debug or anti-tamper code, but in retail games it can also appear when a dependency fails an internal assertion.",
-      "checks": [
-        "Check for anti-cheat or launcher messages at the same time.",
-        "Update the game and launcher.",
-        "Remove debug tools or injected overlays for one test."
-      ],
-      "sources": ["microsoft-ms-erref"]
+      "explanation": "The process hit a breakpoint exception. Debug tools, anti-tamper code, or a failed internal check can trigger this.",
+      "sources": [
+        "microsoft-ms-erref"
+      ]
+    },
+    {
+      "code": "0xc0000135",
+      "name": "STATUS_DLL_NOT_FOUND",
+      "category": "runtime",
+      "confidence": "Medium",
+      "explanation": "The process could not load a required DLL. The missing name in the event message is the important detail.",
+      "sources": [
+        "microsoft-ms-erref"
+      ]
+    },
+    {
+      "code": "0xc0000142",
+      "name": "STATUS_DLL_INIT_FAILED",
+      "category": "runtime",
+      "confidence": "Medium",
+      "explanation": "A DLL loaded but failed during startup. The faulting module usually points to the dependency that failed to initialize.",
+      "sources": [
+        "microsoft-ms-erref"
+      ]
+    },
+    {
+      "code": "0xc000007b",
+      "name": "STATUS_INVALID_IMAGE_FORMAT",
+      "category": "runtime",
+      "confidence": "Medium",
+      "explanation": "Windows tried to load a broken or mismatched binary image. This is a dependency format problem, not a gameplay crash.",
+      "sources": [
+        "microsoft-ms-erref"
+      ]
     }
   ],
   "bugChecks": [
@@ -185,65 +222,100 @@
       "name": "VIDEO_TDR_FAILURE",
       "category": "gpu-driver",
       "confidence": "High",
-      "explanation": "Windows tried to reset the graphics stack after the GPU stopped responding, but recovery failed and the system bug checked. In a gaming context this points to the display driver path, GPU instability, overheating, power delivery, bad shader caches, or a driver regression.",
-      "checks": [
-        "Look for Display 4101 events before the bug check.",
-        "Clean-install the GPU driver and test stock clocks.",
-        "Check GPU temperatures, power cables, and PSU stability."
-      ],
-      "sources": ["microsoft-bugcheck-116"]
+      "explanation": "The GPU stopped responding and Windows could not recover the display stack. This is a graphics driver or GPU stability failure.",
+      "sources": [
+        "microsoft-bugcheck-116"
+      ]
     },
     {
       "code": "0x00000050",
       "name": "PAGE_FAULT_IN_NONPAGED_AREA",
       "category": "system-driver",
       "confidence": "High",
-      "explanation": "Kernel code referenced invalid memory that should have been resident. Drivers, RAM instability, bad storage, and antivirus or anti-cheat filter drivers can all be involved. The minidump's failing module is essential.",
-      "checks": [
-        "Check for a driver name in the BSOD or minidump.",
-        "Run memory diagnostics if unrelated apps also crash.",
-        "Update chipset, storage, GPU, and network drivers."
-      ],
-      "sources": ["microsoft-bugchecks"]
+      "explanation": "Kernel code touched invalid memory that should have been resident. A driver, RAM, storage, or filter driver is usually involved.",
+      "sources": [
+        "microsoft-bugchecks"
+      ]
     },
     {
       "code": "0x0000007e",
       "name": "SYSTEM_THREAD_EXCEPTION_NOT_HANDLED",
       "category": "system-driver",
       "confidence": "High",
-      "explanation": "A kernel-mode system thread threw an exception that was not handled. This is usually driver territory, especially if the dump names a .sys file.",
-      "checks": [
-        "Read the minidump for the failing driver.",
-        "Update or roll back the named driver.",
-        "Remove recent kernel-level anti-cheat, VPN, RGB, or hardware monitoring changes."
-      ],
-      "sources": ["microsoft-bugchecks"]
+      "explanation": "A kernel system thread threw an unhandled exception. This usually points to a kernel driver named in the dump.",
+      "sources": [
+        "microsoft-bugchecks"
+      ]
     },
     {
       "code": "0x0000001a",
       "name": "MEMORY_MANAGEMENT",
       "category": "memory",
       "confidence": "High",
-      "explanation": "Windows detected memory manager corruption. In gaming rigs this often deserves RAM stability testing, page file/storage review, BIOS updates, and a check for overclocked memory profiles.",
-      "checks": [
-        "Disable XMP/EXPO temporarily and retest.",
-        "Run a real memory stability test, not only a quick Windows check.",
-        "Check storage health if pagefile activity is heavy."
-      ],
-      "sources": ["microsoft-support-stop-errors"]
+      "explanation": "Windows detected memory manager corruption. RAM instability or bad memory management is the likely cause.",
+      "sources": [
+        "microsoft-support-stop-errors"
+      ]
     },
     {
       "code": "0x000000ef",
       "name": "CRITICAL_PROCESS_DIED",
       "category": "system-driver",
       "confidence": "High",
-      "explanation": "A process Windows considers critical died. This is broader than a game crash and can involve storage, system file corruption, drivers, or security software.",
-      "checks": [
-        "Check System log for disk, WHEA, and service failures nearby.",
-        "Run SFC and DISM only after reviewing storage health.",
-        "Look for recent driver or security software changes."
-      ],
-      "sources": ["microsoft-bugchecks"]
+      "explanation": "A process Windows treats as critical died. This is broader than a single game crash and can involve storage, drivers, or system files.",
+      "sources": [
+        "microsoft-bugchecks"
+      ]
+    },
+    {
+      "code": "0x00000124",
+      "name": "WHEA_UNCORRECTABLE_ERROR",
+      "category": "hardware",
+      "confidence": "High",
+      "explanation": "Windows received an uncorrectable hardware error through WHEA. CPU, RAM, PCIe, GPU, storage, or power delivery can be involved.",
+      "sources": [
+        "microsoft-bugcheck-124"
+      ]
+    },
+    {
+      "code": "0x00000133",
+      "name": "DPC_WATCHDOG_VIOLATION",
+      "category": "system-driver",
+      "confidence": "High",
+      "explanation": "Windows detected stalled interrupt or DPC processing. A storage, network, USB, audio, GPU, or chipset driver is often involved.",
+      "sources": [
+        "microsoft-bugcheck-133"
+      ]
+    },
+    {
+      "code": "0x00000119",
+      "name": "VIDEO_SCHEDULER_INTERNAL_ERROR",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "The Windows video scheduler hit a fatal error. This is a graphics stack failure, not a generic app crash.",
+      "sources": [
+        "microsoft-bugcheck-119"
+      ]
+    },
+    {
+      "code": "0x0000009f",
+      "name": "DRIVER_POWER_STATE_FAILURE",
+      "category": "system-driver",
+      "confidence": "High",
+      "explanation": "A driver got stuck during a power transition. Sleep, wake, USB, network, storage, Bluetooth, or GPU power paths are common sources.",
+      "sources": [
+        "microsoft-bugcheck-9f"
+      ]
+    },
+    {
+      "code": "0x0000003b",
+      "name": "SYSTEM_SERVICE_EXCEPTION",
+      "category": "system-driver",
+      "confidence": "High",
+      "explanation": "An exception happened while Windows was running a kernel service routine. The named driver in the dump is the key detail.",
+      "sources": [
+        "microsoft-bugcheck-3b"
+      ]
     }
   ],
   "moduleHeuristics": [
@@ -251,85 +323,181 @@
       "contains": "nvwgf2um",
       "category": "gpu-driver",
       "confidence": "High",
-      "explanation": "The NVIDIA user-mode graphics driver is in the crash signature. Game engines hit this path during DirectX rendering, shader compilation, or presentation."
+      "explanation": "The NVIDIA user-mode graphics driver was active when the process crashed."
+    },
+    {
+      "contains": "nvoglv",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "The NVIDIA OpenGL driver was active when the process crashed."
     },
     {
       "contains": "nvlddmkm",
       "category": "gpu-driver",
       "confidence": "High",
-      "explanation": "The NVIDIA kernel display driver is involved. Repeated crashes here are stronger evidence for driver, GPU, power, or TDR instability than for a single game bug."
+      "explanation": "The NVIDIA kernel display driver was involved in this failure."
     },
     {
       "contains": "amdxx64",
       "category": "gpu-driver",
       "confidence": "High",
-      "explanation": "An AMD DirectX user-mode driver is in the crash signature. Treat this as a graphics path problem unless the game has a known matching signature."
+      "explanation": "An AMD DirectX user-mode driver was active when the process crashed."
     },
     {
       "contains": "atidxx64",
       "category": "gpu-driver",
       "confidence": "High",
-      "explanation": "An AMD DirectX driver module faulted. Driver version, shader cache, overlays, and GPU stability should be checked."
+      "explanation": "An AMD DirectX driver module faulted during this crash."
+    },
+    {
+      "contains": "atio6axx",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "An AMD OpenGL driver module was active when the process crashed."
+    },
+    {
+      "contains": "igdkmd",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "An Intel graphics kernel driver was involved in this failure."
+    },
+    {
+      "contains": "igc",
+      "category": "gpu-driver",
+      "confidence": "Medium",
+      "explanation": "An Intel graphics compiler or runtime module appears in this crash signature."
     },
     {
       "contains": "d3d11",
       "category": "directx",
       "confidence": "High",
-      "explanation": "The Direct3D 11 runtime appears in the signature. That usually means the game was in the rendering path when it failed, but the root cause may still be the game, GPU driver, overlays, or corrupted shaders."
+      "explanation": "The Direct3D 11 runtime was active when the process crashed."
     },
     {
       "contains": "dxgi",
       "category": "directx",
       "confidence": "High",
-      "explanation": "DXGI handles swap chains, adapters, and presentation. Crashes here often line up with fullscreen mode changes, overlays, capture hooks, or GPU driver resets."
+      "explanation": "DXGI was active during this crash. Swap chain, adapter, or presentation code was on the stack."
+    },
+    {
+      "contains": "d3d12",
+      "category": "directx",
+      "confidence": "High",
+      "explanation": "The Direct3D 12 runtime was active when the process crashed."
+    },
+    {
+      "contains": "dxgmms2",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "The DirectX graphics memory manager was involved in this failure."
+    },
+    {
+      "contains": "watchdog.sys",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "The Windows watchdog driver was involved, often with a video scheduler or TDR failure."
     },
     {
       "contains": "EasyAntiCheat",
       "category": "anticheat",
       "confidence": "High",
-      "explanation": "Easy Anti-Cheat is in the crash signature. Focus on repairing the anti-cheat install, rebooting services, and removing conflicting kernel tools before reinstalling the game."
+      "explanation": "Easy Anti-Cheat code was running when the process crashed."
     },
     {
       "contains": "BEService",
       "category": "anticheat",
       "confidence": "High",
-      "explanation": "BattlEye service code appears in the signature. Anti-cheat service state, security software, and kernel-driver conflicts are the first places to inspect."
+      "explanation": "BattlEye service code was running when the process crashed."
     },
     {
       "contains": "BEClient",
       "category": "anticheat",
       "confidence": "High",
-      "explanation": "BattlEye client code appears in the signature. Repair BattlEye from the game folder or launcher and test without overlays."
+      "explanation": "BattlEye client code was running when the process crashed."
+    },
+    {
+      "contains": "BEDaisy",
+      "category": "anticheat",
+      "confidence": "High",
+      "explanation": "BattlEye kernel driver code was involved in this failure."
+    },
+    {
+      "contains": "EAAntiCheat",
+      "category": "anticheat",
+      "confidence": "High",
+      "explanation": "EA AntiCheat code was running when the process crashed."
+    },
+    {
+      "contains": "GameGuard",
+      "category": "anticheat",
+      "confidence": "High",
+      "explanation": "GameGuard anti-cheat code was running when the process crashed."
     },
     {
       "contains": "vgk.sys",
       "category": "anticheat",
       "confidence": "High",
-      "explanation": "Riot Vanguard's kernel driver is involved. Because this runs in kernel mode, check Vanguard service health, Secure Boot/TPM requirements, and conflicts with other low-level tools."
+      "explanation": "Riot Vanguard kernel driver code was involved in this failure."
     },
     {
       "contains": "vgc.exe",
       "category": "anticheat",
       "confidence": "High",
-      "explanation": "Riot Vanguard's user-mode service is involved. Restart Vanguard and Riot Client, then check service startup and Windows security compatibility."
+      "explanation": "Riot Vanguard user-mode service code was running when the process crashed."
     },
     {
       "contains": "ucrtbase",
       "category": "runtime",
       "confidence": "Medium",
-      "explanation": "The Universal C Runtime appears in the crash signature. This can be a runtime dependency issue, but it often means the game called into the C runtime after corrupting state earlier."
+      "explanation": "The Universal C Runtime was on the crash stack. The app may have already been in a bad state before this call."
+    },
+    {
+      "contains": "VCRUNTIME",
+      "category": "runtime",
+      "confidence": "Medium",
+      "explanation": "A Visual C++ runtime DLL was on the crash stack. The app may have already been in a bad state before this call."
+    },
+    {
+      "contains": "EOSSDK",
+      "category": "network-or-launcher",
+      "confidence": "Medium",
+      "explanation": "Epic Online Services SDK code was running when the process crashed."
+    },
+    {
+      "contains": "lwjgl",
+      "category": "opengl",
+      "confidence": "Medium",
+      "explanation": "LWJGL native bridge code was active when the Java process crashed."
+    },
+    {
+      "contains": "OpenAL",
+      "category": "runtime",
+      "confidence": "Medium",
+      "explanation": "OpenAL audio code was active when the process crashed."
+    },
+    {
+      "contains": "UnityPlayer",
+      "category": "application-bug",
+      "confidence": "Medium",
+      "explanation": "Unity engine code was active when the process crashed."
+    },
+    {
+      "contains": "Unreal",
+      "category": "application-bug",
+      "confidence": "Medium",
+      "explanation": "Unreal Engine code was active when the process crashed."
     },
     {
       "contains": "KERNELBASE",
       "category": "runtime",
       "confidence": "Low",
-      "explanation": "KERNELBASE is a common final crash-reporting module. Do not treat it as root cause by itself; pair it with exception code, app name, and nearby WER details."
+      "explanation": "KERNELBASE is a common final reporting module. It is rarely the root cause by itself."
     },
     {
       "contains": "ntdll",
       "category": "runtime",
       "confidence": "Low",
-      "explanation": "ntdll is deep in Windows user-mode runtime code and often appears at the end of a failure chain. Repeated ntdll crashes across many apps can suggest system instability."
+      "explanation": "ntdll is deep Windows user-mode runtime code. It often appears at the end of a failure chain."
     }
   ],
   "sources": {
@@ -337,6 +505,11 @@
     "microsoft-kernel-power-41": "https://learn.microsoft.com/en-us/troubleshoot/windows-client/performance/event-id-41-restart",
     "microsoft-unexpected-reboots": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/performance/troubleshoot-unexpected-reboots-system-event-logs",
     "microsoft-bugcheck-116": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x116---video-tdr-failure",
+    "microsoft-bugcheck-119": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x119---video-scheduler-internal-error",
+    "microsoft-bugcheck-124": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x124---whea-uncorrectable-error",
+    "microsoft-bugcheck-133": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x133-dpc-watchdog-violation",
+    "microsoft-bugcheck-9f": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x9f--driver-power-state-failure",
+    "microsoft-bugcheck-3b": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x3b--system-service-exception",
     "microsoft-bugchecks": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-checks--blue-screens-",
     "microsoft-support-stop-errors": "https://support.microsoft.com/help/14238",
     "microsoft-ms-erref": "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55",
