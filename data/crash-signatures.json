@@ -1,0 +1,347 @@
+{
+  "version": 2,
+  "eventDefinitions": [
+    {
+      "logName": "Application",
+      "providerName": "Application Error",
+      "eventId": 1000,
+      "kind": "application-crash",
+      "explanation": "Windows logged a process crash. The important fields are the faulting application, faulting module, exception code, and fault offset."
+    },
+    {
+      "logName": "Application",
+      "providerName": "Application Hang",
+      "eventId": 1002,
+      "kind": "application-hang",
+      "explanation": "Windows logged that the app stopped responding. Hangs are often caused by blocked IO, deadlocked threads, driver stalls, or overlays hooking the process."
+    },
+    {
+      "logName": "Application",
+      "providerName": "Windows Error Reporting",
+      "eventId": 1001,
+      "kind": "wer-report",
+      "explanation": "Windows Error Reporting collected a crash or hang report. This often appears beside Event ID 1000 or 1002 for the same process."
+    },
+    {
+      "logName": "Application",
+      "providerName": ".NET Runtime",
+      "eventId": 1026,
+      "kind": "dotnet-runtime",
+      "explanation": "A managed .NET app threw an unhandled exception. Check the message for the exception type and stack trace."
+    },
+    {
+      "logName": "System",
+      "providerName": "Microsoft-Windows-WER-SystemErrorReporting",
+      "eventId": 1001,
+      "kind": "system-bugcheck-report",
+      "explanation": "Windows Error Reporting recorded a system bug check report after a stop error."
+    },
+    {
+      "logName": "System",
+      "providerName": "BugCheck",
+      "eventId": 1001,
+      "kind": "bugcheck",
+      "explanation": "The machine rebooted after a Windows stop error. The bug check code is usually the strongest first clue."
+    },
+    {
+      "logName": "System",
+      "providerName": "Microsoft-Windows-Kernel-Power",
+      "eventId": 41,
+      "kind": "unexpected-reboot",
+      "explanation": "Windows started after it was not shut down cleanly. This can follow a BSOD, power loss, freeze, reset button press, or unstable overclock."
+    },
+    {
+      "logName": "System",
+      "providerName": "EventLog",
+      "eventId": 6008,
+      "kind": "unexpected-shutdown",
+      "explanation": "Windows noticed the previous shutdown was unexpected. Pair this with nearby BugCheck, Kernel-Power, disk, driver, or thermal events."
+    },
+    {
+      "logName": "System",
+      "providerName": "Display",
+      "eventId": 4101,
+      "kind": "display-driver-reset",
+      "explanation": "The display driver stopped responding and recovered. Repeated 4101 events near a game crash point toward GPU driver, GPU stability, or TDR issues."
+    },
+    {
+      "logName": "System",
+      "providerName": "Disk",
+      "eventId": 7,
+      "kind": "disk-bad-block",
+      "explanation": "Windows reported a bad block on a disk. Game files, shader caches, or paging activity on that disk can become unreliable."
+    },
+    {
+      "logName": "System",
+      "providerName": "Disk",
+      "eventId": 51,
+      "kind": "disk-io-warning",
+      "explanation": "Windows detected an IO warning during paging or disk access. Crashes around this event deserve a storage health check."
+    },
+    {
+      "logName": "System",
+      "providerName": "WHEA-Logger",
+      "eventId": 18,
+      "kind": "hardware-error",
+      "explanation": "Windows Hardware Error Architecture logged a fatal hardware error. CPU, RAM, PCIe, GPU, BIOS, or voltage instability can be involved."
+    }
+  ],
+  "exceptionCodes": [
+    {
+      "code": "0xc0000005",
+      "name": "STATUS_ACCESS_VIOLATION",
+      "category": "access-violation",
+      "confidence": "Medium",
+      "explanation": "The process tried to read, write, or execute memory it was not allowed to touch. In games this commonly appears when a driver, overlay, injected DLL, mod, corrupt asset, or engine bug hands the process a bad pointer. The faulting module matters more than the code alone: if the module is a GPU DLL, treat it like a graphics path problem; if it is an anti-cheat DLL, focus on services and security conflicts; if it is the game executable, verify files and remove mods first.",
+      "checks": [
+        "Compare the faulting module across repeated crashes.",
+        "Disable overlays and capture tools for one clean test.",
+        "Verify game files before reinstalling the whole game."
+      ],
+      "sources": ["microsoft-ms-erref"]
+    },
+    {
+      "code": "0xc0000374",
+      "name": "STATUS_HEAP_CORRUPTION",
+      "category": "corrupt-files",
+      "confidence": "Medium",
+      "explanation": "The Windows heap manager detected corrupted heap metadata. That usually means something wrote past an allocation, freed memory twice, or damaged process memory before the crash was reported. For games, start with mods, overlays, unstable RAM or XMP/EXPO settings, and corrupted local files.",
+      "checks": [
+        "Retest without mods, reshade, injectors, and overlays.",
+        "Run the launcher repair/verify action.",
+        "If many unrelated apps show this code, test memory stability."
+      ],
+      "sources": ["microsoft-ms-erref"]
+    },
+    {
+      "code": "0xc0000409",
+      "name": "STATUS_STACK_BUFFER_OVERRUN",
+      "category": "application-bug",
+      "confidence": "Medium",
+      "explanation": "Windows terminated the process after detecting stack corruption or a security cookie failure. This can be a real app bug, an incompatible hook, or a broken injected module. It is less useful as a standalone code than as a repeated signature with the same module.",
+      "checks": [
+        "Check whether the same module appears each time.",
+        "Remove overlays, recording tools, and third-party injectors.",
+        "Update the affected game or launcher before changing system settings."
+      ],
+      "sources": ["microsoft-ms-erref"]
+    },
+    {
+      "code": "0xc000001d",
+      "name": "STATUS_ILLEGAL_INSTRUCTION",
+      "category": "application-bug",
+      "confidence": "Medium",
+      "explanation": "The CPU was asked to execute an instruction it could not decode or was not allowed to run. This can happen with CPU feature mismatches, damaged code in memory, aggressive overclocks, or old CPUs running builds that expect newer instruction sets.",
+      "checks": [
+        "Check the game's minimum CPU feature requirements.",
+        "Remove CPU and RAM overclocks for a test run.",
+        "Verify files so damaged binaries are replaced."
+      ],
+      "sources": ["microsoft-ms-erref"]
+    },
+    {
+      "code": "0xe0434352",
+      "name": ".NET CLR exception",
+      "category": "dotnet-runtime",
+      "confidence": "Medium",
+      "explanation": "A managed .NET exception escaped the app. The useful clue is usually in the nearby .NET Runtime Event ID 1026 message, where Windows may include the exception type and stack trace. Treat the native Application Error as a pointer to the managed failure rather than the root cause by itself.",
+      "checks": [
+        "Open the paired .NET Runtime 1026 event and read the first exception line.",
+        "Update or repair the launcher or tool that crashed.",
+        "If it is your app, capture a full stack trace or local dump."
+      ],
+      "sources": ["microsoft-application-crash"]
+    },
+    {
+      "code": "0xc00000fd",
+      "name": "STATUS_STACK_OVERFLOW",
+      "category": "application-bug",
+      "confidence": "Medium",
+      "explanation": "The process exhausted its thread stack. Recursive scripts, broken plugins, bad UI loops, or engine bugs can cause this. In modded games, this is a strong reason to test a clean profile.",
+      "checks": [
+        "Disable mods or plugins and retest.",
+        "Look for repeated startup crashes after loading the same content.",
+        "Update the game and any script extender or mod loader."
+      ],
+      "sources": ["microsoft-ms-erref"]
+    },
+    {
+      "code": "0x80000003",
+      "name": "STATUS_BREAKPOINT",
+      "category": "application-bug",
+      "confidence": "Low",
+      "explanation": "The app hit a breakpoint exception. This can be intentional in debug or anti-tamper code, but in retail games it can also appear when a dependency fails an internal assertion.",
+      "checks": [
+        "Check for anti-cheat or launcher messages at the same time.",
+        "Update the game and launcher.",
+        "Remove debug tools or injected overlays for one test."
+      ],
+      "sources": ["microsoft-ms-erref"]
+    }
+  ],
+  "bugChecks": [
+    {
+      "code": "0x00000116",
+      "name": "VIDEO_TDR_FAILURE",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "Windows tried to reset the graphics stack after the GPU stopped responding, but recovery failed and the system bug checked. In a gaming context this points to the display driver path, GPU instability, overheating, power delivery, bad shader caches, or a driver regression.",
+      "checks": [
+        "Look for Display 4101 events before the bug check.",
+        "Clean-install the GPU driver and test stock clocks.",
+        "Check GPU temperatures, power cables, and PSU stability."
+      ],
+      "sources": ["microsoft-bugcheck-116"]
+    },
+    {
+      "code": "0x00000050",
+      "name": "PAGE_FAULT_IN_NONPAGED_AREA",
+      "category": "system-driver",
+      "confidence": "High",
+      "explanation": "Kernel code referenced invalid memory that should have been resident. Drivers, RAM instability, bad storage, and antivirus or anti-cheat filter drivers can all be involved. The minidump's failing module is essential.",
+      "checks": [
+        "Check for a driver name in the BSOD or minidump.",
+        "Run memory diagnostics if unrelated apps also crash.",
+        "Update chipset, storage, GPU, and network drivers."
+      ],
+      "sources": ["microsoft-bugchecks"]
+    },
+    {
+      "code": "0x0000007e",
+      "name": "SYSTEM_THREAD_EXCEPTION_NOT_HANDLED",
+      "category": "system-driver",
+      "confidence": "High",
+      "explanation": "A kernel-mode system thread threw an exception that was not handled. This is usually driver territory, especially if the dump names a .sys file.",
+      "checks": [
+        "Read the minidump for the failing driver.",
+        "Update or roll back the named driver.",
+        "Remove recent kernel-level anti-cheat, VPN, RGB, or hardware monitoring changes."
+      ],
+      "sources": ["microsoft-bugchecks"]
+    },
+    {
+      "code": "0x0000001a",
+      "name": "MEMORY_MANAGEMENT",
+      "category": "memory",
+      "confidence": "High",
+      "explanation": "Windows detected memory manager corruption. In gaming rigs this often deserves RAM stability testing, page file/storage review, BIOS updates, and a check for overclocked memory profiles.",
+      "checks": [
+        "Disable XMP/EXPO temporarily and retest.",
+        "Run a real memory stability test, not only a quick Windows check.",
+        "Check storage health if pagefile activity is heavy."
+      ],
+      "sources": ["microsoft-support-stop-errors"]
+    },
+    {
+      "code": "0x000000ef",
+      "name": "CRITICAL_PROCESS_DIED",
+      "category": "system-driver",
+      "confidence": "High",
+      "explanation": "A process Windows considers critical died. This is broader than a game crash and can involve storage, system file corruption, drivers, or security software.",
+      "checks": [
+        "Check System log for disk, WHEA, and service failures nearby.",
+        "Run SFC and DISM only after reviewing storage health.",
+        "Look for recent driver or security software changes."
+      ],
+      "sources": ["microsoft-bugchecks"]
+    }
+  ],
+  "moduleHeuristics": [
+    {
+      "contains": "nvwgf2um",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "The NVIDIA user-mode graphics driver is in the crash signature. Game engines hit this path during DirectX rendering, shader compilation, or presentation."
+    },
+    {
+      "contains": "nvlddmkm",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "The NVIDIA kernel display driver is involved. Repeated crashes here are stronger evidence for driver, GPU, power, or TDR instability than for a single game bug."
+    },
+    {
+      "contains": "amdxx64",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "An AMD DirectX user-mode driver is in the crash signature. Treat this as a graphics path problem unless the game has a known matching signature."
+    },
+    {
+      "contains": "atidxx64",
+      "category": "gpu-driver",
+      "confidence": "High",
+      "explanation": "An AMD DirectX driver module faulted. Driver version, shader cache, overlays, and GPU stability should be checked."
+    },
+    {
+      "contains": "d3d11",
+      "category": "directx",
+      "confidence": "High",
+      "explanation": "The Direct3D 11 runtime appears in the signature. That usually means the game was in the rendering path when it failed, but the root cause may still be the game, GPU driver, overlays, or corrupted shaders."
+    },
+    {
+      "contains": "dxgi",
+      "category": "directx",
+      "confidence": "High",
+      "explanation": "DXGI handles swap chains, adapters, and presentation. Crashes here often line up with fullscreen mode changes, overlays, capture hooks, or GPU driver resets."
+    },
+    {
+      "contains": "EasyAntiCheat",
+      "category": "anticheat",
+      "confidence": "High",
+      "explanation": "Easy Anti-Cheat is in the crash signature. Focus on repairing the anti-cheat install, rebooting services, and removing conflicting kernel tools before reinstalling the game."
+    },
+    {
+      "contains": "BEService",
+      "category": "anticheat",
+      "confidence": "High",
+      "explanation": "BattlEye service code appears in the signature. Anti-cheat service state, security software, and kernel-driver conflicts are the first places to inspect."
+    },
+    {
+      "contains": "BEClient",
+      "category": "anticheat",
+      "confidence": "High",
+      "explanation": "BattlEye client code appears in the signature. Repair BattlEye from the game folder or launcher and test without overlays."
+    },
+    {
+      "contains": "vgk.sys",
+      "category": "anticheat",
+      "confidence": "High",
+      "explanation": "Riot Vanguard's kernel driver is involved. Because this runs in kernel mode, check Vanguard service health, Secure Boot/TPM requirements, and conflicts with other low-level tools."
+    },
+    {
+      "contains": "vgc.exe",
+      "category": "anticheat",
+      "confidence": "High",
+      "explanation": "Riot Vanguard's user-mode service is involved. Restart Vanguard and Riot Client, then check service startup and Windows security compatibility."
+    },
+    {
+      "contains": "ucrtbase",
+      "category": "runtime",
+      "confidence": "Medium",
+      "explanation": "The Universal C Runtime appears in the crash signature. This can be a runtime dependency issue, but it often means the game called into the C runtime after corrupting state earlier."
+    },
+    {
+      "contains": "KERNELBASE",
+      "category": "runtime",
+      "confidence": "Low",
+      "explanation": "KERNELBASE is a common final crash-reporting module. Do not treat it as root cause by itself; pair it with exception code, app name, and nearby WER details."
+    },
+    {
+      "contains": "ntdll",
+      "category": "runtime",
+      "confidence": "Low",
+      "explanation": "ntdll is deep in Windows user-mode runtime code and often appears at the end of a failure chain. Repeated ntdll crashes across many apps can suggest system instability."
+    }
+  ],
+  "sources": {
+    "microsoft-application-crash": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/performance/troubleshoot-application-service-crashing-behavior",
+    "microsoft-kernel-power-41": "https://learn.microsoft.com/en-us/troubleshoot/windows-client/performance/event-id-41-restart",
+    "microsoft-unexpected-reboots": "https://learn.microsoft.com/en-us/troubleshoot/windows-server/performance/troubleshoot-unexpected-reboots-system-event-logs",
+    "microsoft-bugcheck-116": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-check-0x116---video-tdr-failure",
+    "microsoft-bugchecks": "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/bug-checks--blue-screens-",
+    "microsoft-support-stop-errors": "https://support.microsoft.com/help/14238",
+    "microsoft-ms-erref": "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55",
+    "microsoft-get-appxpackage": "https://learn.microsoft.com/powershell/module/appx/get-appxpackage",
+    "steam-appmanifest": "https://wiki.archlinux.org/title/Steam",
+    "epic-manifests": "https://dev.epicgames.com/documentation/en-us/unreal-engine/multiple-launcher-unreal-engine-installs"
+  }
+}

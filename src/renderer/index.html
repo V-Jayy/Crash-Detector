@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crash Detector</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="window-bar">
+      <div class="window-title">Crash Detector</div>
+      <div class="window-controls">
+        <button id="minimizeWindow" aria-label="Minimize window">-</button>
+        <button id="maximizeWindow" aria-label="Maximize window">□</button>
+        <button id="closeWindow" aria-label="Close window">×</button>
+      </div>
+    </header>
+
+    <div class="app-shell">
+      <aside class="rail">
+        <div class="brand-block">
+          <div>
+            <h1>Crash Detector</h1>
+            <p>Signal-first crash review</p>
+          </div>
+        </div>
+
+        <section class="control-block" aria-labelledby="scanHeading">
+          <h2 id="scanHeading">Scan scope</h2>
+          <label>
+            <span>Lookback</span>
+            <select id="days">
+              <option value="1">1 day</option>
+              <option value="7">7 days</option>
+              <option value="14">14 days</option>
+              <option value="30" selected>30 days</option>
+              <option value="60">60 days</option>
+            </select>
+          </label>
+          <label>
+            <span>Process or game</span>
+            <input id="processFilter" placeholder="cs2.exe, Fortnite, javaw" />
+          </label>
+          <label class="toggle-line">
+            <span>System events</span>
+            <input id="includeSystem" type="checkbox" checked />
+          </label>
+          <label class="toggle-line">
+            <span>Health checks</span>
+            <input id="includeHealthChecks" type="checkbox" checked />
+          </label>
+          <button id="scanButton" class="primary">Scan last 30 days</button>
+          <button id="chooseExeButton" class="secondary">Choose EXE</button>
+        </section>
+
+        <section id="gamesPanel" class="control-block grow" aria-labelledby="gamesHeading">
+          <div class="block-head">
+            <h2 id="gamesHeading">Installed games</h2>
+            <button id="detectGamesButton" class="mini">Open</button>
+          </div>
+          <div id="installedGames" class="game-summary empty">No detected games yet.</div>
+          <button id="refreshGamesButton" class="secondary compact">Refresh detection</button>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="command-bar">
+          <div>
+            <p class="kicker">Event Viewer triage</p>
+            <h2 id="title">Preparing 30-day scan</h2>
+            <p class="hero-credit">Built with Lumin support: <strong>discord.gg/lumin</strong></p>
+          </div>
+        </header>
+
+        <section class="metrics" aria-label="Scan summary">
+          <article>
+            <span>Groups</span>
+            <strong id="totalCrashes">0</strong>
+          </article>
+          <article>
+            <span>Events</span>
+            <strong id="totalEvents">0</strong>
+          </article>
+          <article>
+            <span>Crash signatures</span>
+            <strong id="signatureCount">0</strong>
+          </article>
+          <article>
+            <span>Window</span>
+            <strong id="scanWindow">30d</strong>
+          </article>
+        </section>
+
+        <section class="scan-animation" id="scanAnimation" aria-live="polite">
+          <div class="radar" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div>
+            <strong>Scanning Windows logs</strong>
+            <p id="scanStatus">Reading Application, System, WER, BugCheck, Display, Disk, WHEA, and service events.</p>
+          </div>
+        </section>
+
+        <section class="review-grid">
+          <div class="results-pane">
+            <div class="pane-head">
+              <h3>Crash signatures</h3>
+              <span id="resultCount">Waiting</span>
+            </div>
+            <div id="resultsList" class="results-list"></div>
+          </div>
+
+          <article id="detailPanel" class="detail-panel">
+            <div class="empty-detail">
+              <div class="empty-icon" aria-hidden="true">!</div>
+              <h3>Scanning starts automatically</h3>
+              <p>The strongest crash signature will open here with a full explanation, evidence, checks, and raw event details.</p>
+            </div>
+          </article>
+        </section>
+      </main>
+
+      <section id="gamePopover" class="game-popover" aria-labelledby="gameMenuTitle" hidden>
+        <div class="popover-head">
+          <div>
+            <h2 id="gameMenuTitle">Installed games</h2>
+            <p id="gameMenuStatus">Detected games appear here without resizing the app.</p>
+          </div>
+          <button id="closeGamePopover" class="mini" aria-label="Close games menu">Close</button>
+        </div>
+        <form id="customExeForm" class="custom-exe">
+          <label>
+            <span>Custom EXE or process</span>
+            <input id="customExeInput" placeholder="RobloxPlayerBeta.exe, audiodg.exe" autocomplete="off" />
+          </label>
+          <button class="primary" type="submit">Scan this process</button>
+        </form>
+        <div id="gameMenuList" class="game-menu-list"></div>
+      </section>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

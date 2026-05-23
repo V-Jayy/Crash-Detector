@@ -1,0 +1,259 @@
+{
+  "version": 2,
+  "games": [
+    {
+      "id": "fortnite",
+      "displayName": "Fortnite",
+      "launcher": "Epic Games Launcher",
+      "processNames": ["FortniteClient-Win64-Shipping.exe", "FortniteClient-Win64-Shipping_EAC_EOS.exe", "FortniteLauncher.exe"],
+      "installMarkers": ["FortniteGame\\Binaries\\Win64\\FortniteClient-Win64-Shipping.exe"],
+      "publishers": ["Epic Games"],
+      "knownModules": ["EasyAntiCheat", "EOSSDK-Win64-Shipping.dll", "UnrealEngine"],
+      "knownCrashes": [
+        {
+          "id": "fortnite-eac-module",
+          "title": "Fortnite crash with Easy Anti-Cheat in the signature",
+          "faultingModuleContains": "EasyAntiCheat",
+          "category": "anticheat",
+          "explanation": "Fortnite uses Easy Anti-Cheat, and a signature containing EasyAntiCheat points to the launch protection path rather than only the game renderer. Repairing EAC and rebooting is more useful than generic reinstall advice.",
+          "evidence": ["Faulting module contains EasyAntiCheat.", "Process name matches Fortnite."],
+          "checks": ["Use Epic Games Launcher Verify.", "Repair Easy Anti-Cheat from the Fortnite install folder if present.", "Disable overlays and kernel-level tools for one launch test."]
+        }
+      ],
+      "commonCauses": ["Easy Anti-Cheat or Epic overlay conflicts", "Outdated GPU drivers or DirectX issues", "Corrupted Fortnite or Epic launcher cache"],
+      "sources": ["https://www.epicgames.com/help/en-US/c-5719341627163/a000086158"]
+    },
+    {
+      "id": "valorant",
+      "displayName": "VALORANT",
+      "launcher": "Riot Client",
+      "processNames": ["VALORANT-Win64-Shipping.exe", "VALORANT.exe", "RiotClientServices.exe"],
+      "installMarkers": ["ShooterGame\\Binaries\\Win64\\VALORANT-Win64-Shipping.exe"],
+      "publishers": ["Riot Games"],
+      "knownModules": ["vgk.sys", "vgc.exe", "Riot Vanguard"],
+      "knownCrashes": [
+        {
+          "id": "valorant-vanguard",
+          "title": "VALORANT crash involving Riot Vanguard",
+          "faultingModuleContains": "vg",
+          "category": "anticheat",
+          "explanation": "VALORANT depends on Riot Vanguard. A crash or system event involving vgk.sys or vgc.exe should be treated as a Vanguard/service/security compatibility issue first, especially on Windows 11 systems with Secure Boot, TPM, or memory integrity changes.",
+          "evidence": ["Faulting module mentions Vanguard components.", "Process name matches VALORANT or Riot Client."],
+          "checks": ["Exit Vanguard from the tray, reboot, then relaunch Riot Client.", "Check the vgc service is present and running.", "Review recent changes to Secure Boot, TPM, HVCI, antivirus, or other anti-cheats."]
+        }
+      ],
+      "commonCauses": ["Riot Vanguard service or kernel-driver conflicts", "Windows security feature compatibility", "Conflicts with other anti-cheats or low-level tools"],
+      "sources": ["https://support-valorant.riotgames.com/hc/en-us/articles/360048981973-Gathering-Logs-in-VALORANT"]
+    },
+    {
+      "id": "league-of-legends",
+      "displayName": "League of Legends",
+      "launcher": "Riot Client",
+      "processNames": ["League of Legends.exe", "LeagueClient.exe", "LeagueClientUx.exe"],
+      "installMarkers": ["League of Legends.exe", "LeagueClient.exe"],
+      "publishers": ["Riot Games"],
+      "knownModules": ["vgk.sys", "vgc.exe"],
+      "commonCauses": ["Riot Client patch files", "Vanguard service issues on current League builds", "Overlay conflicts"],
+      "sources": ["https://support-leagueoflegends.riotgames.com/"]
+    },
+    {
+      "id": "apex-legends",
+      "displayName": "Apex Legends",
+      "launcher": "Steam / EA app",
+      "steamAppId": "1172470",
+      "processNames": ["r5apex.exe", "EasyAntiCheat_EOS.exe"],
+      "installMarkers": ["r5apex.exe"],
+      "publishers": ["Electronic Arts", "Respawn Entertainment"],
+      "knownModules": ["EasyAntiCheat", "OriginSDK", "EAAntiCheat"],
+      "commonCauses": ["Anti-cheat startup failures", "EA app service issues", "Audio or GPU driver conflicts"],
+      "sources": ["https://store.steampowered.com/app/1172470/Apex_Legends/"]
+    },
+    {
+      "id": "counter-strike-2",
+      "displayName": "Counter-Strike 2",
+      "launcher": "Steam",
+      "steamAppId": "730",
+      "processNames": ["cs2.exe"],
+      "installMarkers": ["game\\bin\\win64\\cs2.exe", "cs2.exe"],
+      "publishers": ["Valve"],
+      "knownModules": ["client.dll", "engine2.dll", "materialsystem2.dll"],
+      "knownCrashes": [
+        {
+          "id": "cs2-source2-module",
+          "title": "CS2 crash inside Source 2 game modules",
+          "faultingModuleContains": "engine2",
+          "category": "application-bug",
+          "explanation": "A Source 2 engine module in the signature means the crash happened inside the game engine layer. Before changing Windows, remove launch options and custom configs, then verify files so the engine binaries and shaders are clean.",
+          "evidence": ["Faulting module contains engine2.", "Steam AppID 730 identifies Counter-Strike 2."],
+          "checks": ["Clear custom launch options.", "Verify game files in Steam.", "Test without workshop or autoexec changes."]
+        }
+      ],
+      "commonCauses": ["Custom launch options or configs", "Corrupted Steam game files", "GPU driver or shader cache issues"],
+      "sources": ["https://store.steampowered.com/app/730/CounterStrike_2/"]
+    },
+    {
+      "id": "call-of-duty",
+      "displayName": "Call of Duty / Warzone",
+      "launcher": "Battle.net / Steam / Xbox",
+      "steamAppId": "1938090",
+      "processNames": ["cod.exe", "ModernWarfare.exe", "Warzone.exe"],
+      "installMarkers": ["cod.exe"],
+      "publishers": ["Activision"],
+      "knownModules": ["cod.exe", "amdxx64.dll", "nvwgf2umx.dll"],
+      "commonCauses": ["Shader cache corruption", "High VRAM pressure", "Anti-cheat or launcher updates"],
+      "sources": ["https://store.steampowered.com/app/1938090/Call_of_Duty/"]
+    },
+    {
+      "id": "overwatch-2",
+      "displayName": "Overwatch 2",
+      "launcher": "Battle.net / Steam",
+      "steamAppId": "2357570",
+      "processNames": ["Overwatch.exe"],
+      "installMarkers": ["Overwatch.exe"],
+      "publishers": ["Blizzard Entertainment"],
+      "knownModules": ["Overwatch.exe"],
+      "commonCauses": ["Battle.net agent issues", "GPU driver TDR timeouts", "Overlay conflicts"],
+      "sources": ["https://store.steampowered.com/app/2357570/Overwatch_2/"]
+    },
+    {
+      "id": "destiny-2",
+      "displayName": "Destiny 2",
+      "launcher": "Steam / Epic",
+      "steamAppId": "1085660",
+      "processNames": ["destiny2.exe"],
+      "installMarkers": ["destiny2.exe"],
+      "publishers": ["Bungie"],
+      "knownModules": ["destiny2.exe", "BEService", "BEClient"],
+      "commonCauses": ["BattlEye service issues", "Overlay and capture conflicts", "Corrupted local cache"],
+      "sources": ["https://store.steampowered.com/app/1085660/Destiny_2/"]
+    },
+    {
+      "id": "roblox",
+      "displayName": "Roblox",
+      "launcher": "Roblox Player",
+      "processNames": ["RobloxPlayerBeta.exe", "RobloxStudioBeta.exe"],
+      "installMarkers": ["RobloxPlayerBeta.exe", "RobloxStudioBeta.exe"],
+      "publishers": ["Roblox"],
+      "knownModules": ["RobloxPlayerBeta.exe"],
+      "commonCauses": ["Outdated Roblox client", "Cache corruption", "GPU driver issues"],
+      "sources": ["https://en.help.roblox.com/"]
+    },
+    {
+      "id": "minecraft-java",
+      "displayName": "Minecraft Java Edition",
+      "launcher": "Minecraft Launcher",
+      "processNames": ["javaw.exe", "java.exe", "MinecraftLauncher.exe"],
+      "installMarkers": [".minecraft\\launcher_profiles.json"],
+      "publishers": ["Mojang", "Microsoft"],
+      "knownModules": ["javaw.exe", "OpenAL", "lwjgl", "atio6axx", "nvoglv"],
+      "commonCauses": ["Java/mod conflicts", "Shader or resource pack issues", "OpenGL driver crashes"],
+      "sources": ["https://help.minecraft.net/"]
+    },
+    {
+      "id": "minecraft-bedrock",
+      "displayName": "Minecraft for Windows",
+      "launcher": "Microsoft Store / Xbox app",
+      "processNames": ["Minecraft.Windows.exe"],
+      "installMarkers": ["Microsoft.MinecraftUWP"],
+      "publishers": ["Mojang", "Microsoft"],
+      "knownModules": ["Minecraft.Windows.exe"],
+      "commonCauses": ["Store app package issues", "GPU driver issues", "Xbox Gaming Services problems"],
+      "sources": ["https://help.minecraft.net/"]
+    },
+    {
+      "id": "dota-2",
+      "displayName": "Dota 2",
+      "launcher": "Steam",
+      "steamAppId": "570",
+      "processNames": ["dota2.exe"],
+      "installMarkers": ["game\\bin\\win64\\dota2.exe", "dota2.exe"],
+      "publishers": ["Valve"],
+      "knownModules": ["client.dll", "engine2.dll"],
+      "commonCauses": ["Source 2 engine module crashes", "Custom configs", "GPU driver issues"],
+      "sources": ["https://store.steampowered.com/app/570/Dota_2/"]
+    },
+    {
+      "id": "pubg",
+      "displayName": "PUBG: BATTLEGROUNDS",
+      "launcher": "Steam / Epic",
+      "steamAppId": "578080",
+      "processNames": ["TslGame.exe", "ExecPubg.exe", "TslGame_BE.exe"],
+      "installMarkers": ["TslGame\\Binaries\\Win64\\TslGame.exe"],
+      "publishers": ["KRAFTON"],
+      "knownModules": ["BEService", "BEClient", "TslGame.exe"],
+      "commonCauses": ["BattlEye issues", "Unreal Engine rendering crashes", "Overlay conflicts"],
+      "sources": ["https://store.steampowered.com/app/578080/PUBG_BATTLEGROUNDS/"]
+    },
+    {
+      "id": "rainbow-six-siege",
+      "displayName": "Tom Clancy's Rainbow Six Siege",
+      "launcher": "Ubisoft Connect / Steam",
+      "steamAppId": "359550",
+      "processNames": ["RainbowSix.exe", "RainbowSix_BE.exe"],
+      "installMarkers": ["RainbowSix.exe", "RainbowSix_BE.exe"],
+      "publishers": ["Ubisoft"],
+      "knownModules": ["BEService", "BEClient", "RainbowSix.exe"],
+      "commonCauses": ["BattlEye service conflicts", "Vulkan/DirectX renderer differences", "Overlay conflicts"],
+      "sources": ["https://store.steampowered.com/app/359550/Tom_Clancys_Rainbow_Six_Siege/"]
+    },
+    {
+      "id": "grand-theft-auto-v",
+      "displayName": "Grand Theft Auto V Enhanced",
+      "launcher": "Rockstar Games Launcher / Steam / Epic",
+      "steamAppId": "271590",
+      "processNames": ["GTA5.exe", "PlayGTAV.exe", "GTAVLauncher.exe"],
+      "installMarkers": ["GTA5.exe"],
+      "publishers": ["Rockstar Games"],
+      "knownModules": ["GTA5.exe", "SocialClub", "RAGE"],
+      "commonCauses": ["Rockstar launcher issues", "Modded file conflicts", "GPU driver crashes"],
+      "sources": ["https://store.steampowered.com/app/271590/Grand_Theft_Auto_V_Enhanced/"]
+    },
+    {
+      "id": "rocket-league",
+      "displayName": "Rocket League",
+      "launcher": "Epic Games Launcher",
+      "processNames": ["RocketLeague.exe"],
+      "installMarkers": ["Binaries\\Win64\\RocketLeague.exe"],
+      "publishers": ["Psyonix", "Epic Games"],
+      "knownModules": ["RocketLeague.exe", "EOSSDK-Win64-Shipping.dll"],
+      "commonCauses": ["Epic Online Services overlay", "Corrupted cache", "GPU driver issues"],
+      "sources": ["https://www.epicgames.com/help/rocket-league-c5719357623323"]
+    },
+    {
+      "id": "the-finals",
+      "displayName": "THE FINALS",
+      "launcher": "Steam",
+      "steamAppId": "2073850",
+      "processNames": ["Discovery.exe"],
+      "installMarkers": ["Discovery\\Binaries\\Win64\\Discovery.exe", "Discovery.exe"],
+      "publishers": ["Embark Studios"],
+      "knownModules": ["Discovery.exe", "EasyAntiCheat"],
+      "commonCauses": ["Easy Anti-Cheat issues", "Unreal Engine crashes", "GPU driver or shader cache issues"],
+      "sources": ["https://store.steampowered.com/app/2073850/THE_FINALS/"]
+    },
+    {
+      "id": "helldivers-2",
+      "displayName": "HELLDIVERS 2",
+      "launcher": "Steam",
+      "steamAppId": "553850",
+      "processNames": ["helldivers2.exe"],
+      "installMarkers": ["bin\\helldivers2.exe", "helldivers2.exe"],
+      "publishers": ["PlayStation Publishing LLC"],
+      "knownModules": ["helldivers2.exe", "GameGuard"],
+      "commonCauses": ["Anti-cheat initialization", "GPU driver crashes", "Game file corruption"],
+      "sources": ["https://store.steampowered.com/app/553850/HELLDIVERS_2/"]
+    },
+    {
+      "id": "palworld",
+      "displayName": "Palworld",
+      "launcher": "Steam / Xbox app",
+      "steamAppId": "1623730",
+      "processNames": ["Palworld-Win64-Shipping.exe", "Palworld.exe"],
+      "installMarkers": ["Pal\\Binaries\\Win64\\Palworld-Win64-Shipping.exe"],
+      "publishers": ["Pocketpair"],
+      "knownModules": ["Palworld-Win64-Shipping.exe", "UnrealEngine"],
+      "commonCauses": ["Unreal Engine crash", "Mods or server mismatch", "GPU driver instability"],
+      "sources": ["https://store.steampowered.com/app/1623730/Palworld/"]
+    }
+  ]
+}

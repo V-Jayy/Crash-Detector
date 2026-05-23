@@ -1,0 +1,34 @@
+{
+  "name": "crash-detector",
+  "version": "2.0.0",
+  "description": "Lightweight Electron crash log analyzer for Windows games and apps.",
+  "main": "src/main/main.js",
+  "type": "commonjs",
+  "homepage": "https://github.com/V-Jayy/Crash-Detector#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/V-Jayy/Crash-Detector.git"
+  },
+  "bugs": {
+    "url": "https://github.com/V-Jayy/Crash-Detector/issues"
+  },
+  "scripts": {
+    "start": "electron .",
+    "check": "node --check src/main/main.js && node --check src/main/preload.js && node --check src/shared/analyzer.js && node --check src/shared/event-parser.js && node --check src/shared/formatters.js && node --check src/shared/game-detector.js && node --check src/shared/grouper.js && node --check src/renderer/app.js"
+  },
+  "keywords": [
+    "electron",
+    "windows",
+    "event-viewer",
+    "crash",
+    "games"
+  ],
+  "author": "Lumin",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "electron": "^42.2.0"
+  }
+}
